@@ -4,22 +4,19 @@ const useObserver = (elementRef) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.5 } // Trigger when 50% of the element is visible
-    );
+    const currentElement = elementRef.current;
 
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    });
+
+    if (currentElement) {
+      observer.observe(currentElement);
     }
 
     return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current);
+      if (currentElement) {
+        observer.unobserve(currentElement);
       }
     };
   }, [elementRef]);
