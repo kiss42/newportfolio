@@ -57,7 +57,7 @@ const AboutMe = forwardRef((props, ref) => {
 
           {/* Download Resume Button */}
           <a
-            href="/assets/Steven-Pierre-Resume.pdf"
+            href={`${process.env.PUBLIC_URL}/assets/Steven-Pierre-Resume.pdf`} // Ensure proper path usage
             download
             className="block mt-6 text-center bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
           >
