@@ -26,10 +26,10 @@ const projects = [
     icon: '✅',
   },
   {
-    title: 'Budgeting Tool',  // New Project
+    title: 'Budgeting Tool',  
     description: 'A budgeting tool to manage personal finances effectively.',
-    link: 'https://kiss42.github.io/Budget-Tool/',  // Link to the Budget Tool
-    icon: '💰',  // Icon for the new project
+    link: 'https://kiss42.github.io/Budget-Tool/',  
+    icon: '💰',  
   },
 ];
 
