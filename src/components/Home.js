@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { AiFillHome } from 'react-icons/ai';
+import { AiFillHome, AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
 import { FaUser, FaFolderOpen } from 'react-icons/fa';
 import { GiSkills } from 'react-icons/gi';
 import { MdContactMail } from 'react-icons/md';
@@ -8,20 +8,21 @@ import Projects from './Projects';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
 import AboutMe from './AboutMe';
-import Support from './Support';  // Import Support component
+import Support from './Support'; // Import Support component
 import useObserver from '../utilities/useObserver'; // Custom hook for visibility
 
 const Home = () => {
-  const [activeButton, setActiveButton] = useState('home'); // State to track the active button
+  const [menuOpen, setMenuOpen] = useState(false); // Track if menu is open for mobile
+  const [activeButton, setActiveButton] = useState('home'); // Track the active button
   const aboutMeRef = useRef();
   const skillsRef = useRef();
   const projectsRef = useRef();
-  const supportRef = useRef();  // Ref for Support section
+  const supportRef = useRef(); // Ref for Support section
   const contactRef = useRef();
 
   const isSkillsVisible = useObserver(skillsRef);
   const isProjectsVisible = useObserver(projectsRef);
-  const isSupportVisible = useObserver(supportRef);  // Visibility for Support
+  const isSupportVisible = useObserver(supportRef); // Visibility for Support
   const isContactVisible = useObserver(contactRef);
 
   // Function to handle About link click
@@ -29,6 +30,7 @@ const Home = () => {
     e.preventDefault();
     setActiveButton('about'); // Set active button
     aboutMeRef.current.openMenu(); // This opens the About Me sidebar
+    setMenuOpen(false); // Close the menu on mobile
   };
 
   // Function to smoothly scroll to the target section
@@ -40,6 +42,7 @@ const Home = () => {
         behavior: 'smooth',
       });
     }
+    setMenuOpen(false); // Close the menu on mobile
   };
 
   return (
@@ -47,51 +50,69 @@ const Home = () => {
       {/* About Me Sidebar Menu */}
       <AboutMe ref={aboutMeRef} />
 
+      {/* Hamburger Menu for Mobile */}
+      <div className="sm:hidden fixed top-4 right-4 z-50">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="text-gray-700 hover:text-purple-700 text-3xl"
+        >
+          {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
+        </button>
+      </div>
+
       {/* Navigation Bar */}
-      <nav className="absolute top-0 left-0 right-0 flex justify-center items-center p-4 space-x-4 sm:space-x-6 animate-slideInLeft">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 flex flex-col sm:flex-row justify-center items-center sm:space-x-6 space-x-0 sm:space-y-0 space-y-4 p-4 w-full transition-transform duration-300 ${
+          menuOpen ? 'transform translate-y-0' : 'transform -translate-y-full sm:translate-y-0'
+        }`}
+      >
         {/* Home link */}
         <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
             activeButton === 'home' ? 'border border-purple-700 text-purple-700' : ''
           }`}
           onClick={() => scrollToSection(document.getElementById('home'), 'home')}
         >
           <AiFillHome className="mr-2" />
+          Home
         </button>
 
-        {/* About link - opens About Me menu */}
+        {/* About link */}
         <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
             activeButton === 'about' ? 'border border-purple-700 text-purple-700' : ''
           }`}
           onClick={handleAboutClick}
         >
           <FaUser className="mr-2" />
+          About
         </button>
 
         {/* Skills link */}
         <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
             activeButton === 'skills' ? 'border border-purple-700 text-purple-700' : ''
           }`}
           onClick={() => scrollToSection(skillsRef, 'skills')}
         >
           <GiSkills className="mr-2" />
+          Skills
         </button>
 
         {/* Projects link */}
         <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
             activeButton === 'projects' ? 'border border-purple-700 text-purple-700' : ''
           }`}
           onClick={() => scrollToSection(projectsRef, 'projects')}
         >
           <FaFolderOpen className="mr-2" />
+          Projects
         </button>
 
         {/* Support link */}
         <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
             activeButton === 'support' ? 'border border-purple-700 text-purple-700' : ''
           }`}
           onClick={() => scrollToSection(supportRef, 'support')}
@@ -102,7 +123,7 @@ const Home = () => {
 
         {/* Contact link */}
         <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
             activeButton === 'contact' ? 'border border-purple-700 text-purple-700' : ''
           }`}
           onClick={() => scrollToSection(contactRef, 'contact')}
@@ -111,6 +132,9 @@ const Home = () => {
           Contact
         </button>
       </nav>
+
+      {/* Add padding to the top so the content doesn't overlap with the navbar */}
+      <div className="pt-20"></div>
 
       {/* Home Section */}
       <div id="home" className="pt-16"></div> {/* Offset for navbar */}

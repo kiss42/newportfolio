@@ -190,3 +190,23 @@ button:hover {
 .grid-cols-4 {
   grid-template-columns: repeat(4, 1fr);
 }
+@media (max-width: 430px) { /* For iPhone 16 and similar devices */
+  nav button {
+    padding: 10px; /* Adjust padding for buttons */
+    font-size: 14px; /* Smaller font size for mobile */
+    margin: 0 5px; /* Space out buttons */
+  }
+
+  .flex.items-center {
+    flex-direction: column; /* Stack buttons vertically if screen size is small */
+    align-items: flex-start; /* Align to left */
+  }
+
+  .py-12 {
+    padding: 6px 12px; /* Adjust section padding */
+  }
+
+  .text-lg {
+    font-size: 1rem; /* Adjust general font size */
+  }
+}
