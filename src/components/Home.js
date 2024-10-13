@@ -8,6 +8,7 @@ import Projects from './Projects';
 import Contact from './Contact';
 import Testimonials from './Testimonials';
 import AboutMe from './AboutMe';
+import Support from './Support';  // Import Support component
 import useObserver from '../utilities/useObserver'; // Custom hook for visibility
 
 const Home = () => {
@@ -15,10 +16,12 @@ const Home = () => {
   const aboutMeRef = useRef();
   const skillsRef = useRef();
   const projectsRef = useRef();
+  const supportRef = useRef();  // Ref for Support section
   const contactRef = useRef();
 
   const isSkillsVisible = useObserver(skillsRef);
   const isProjectsVisible = useObserver(projectsRef);
+  const isSupportVisible = useObserver(supportRef);  // Visibility for Support
   const isContactVisible = useObserver(contactRef);
 
   // Function to handle About link click
@@ -86,6 +89,17 @@ const Home = () => {
           <FaFolderOpen className="mr-2" />
         </button>
 
+        {/* Support link */}
+        <button
+          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
+            activeButton === 'support' ? 'border border-purple-700 text-purple-700' : ''
+          }`}
+          onClick={() => scrollToSection(supportRef, 'support')}
+        >
+          <MdContactMail className="mr-2" />
+          Support
+        </button>
+
         {/* Contact link */}
         <button
           className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent hover:bg-transparent ${
@@ -94,6 +108,7 @@ const Home = () => {
           onClick={() => scrollToSection(contactRef, 'contact')}
         >
           <MdContactMail className="mr-2" />
+          Contact
         </button>
       </nav>
 
@@ -125,6 +140,17 @@ const Home = () => {
       {/* Testimonials Section */}
       <div className="py-12">
         <Testimonials />
+      </div>
+
+      {/* Support Section */}
+      <div
+        id="support"
+        ref={supportRef}
+        className={`text-gray-900 py-12 px-4 transition-opacity duration-500 ${
+          isSupportVisible ? 'opacity-100 animate-slideInLeft' : 'opacity-0'
+        }`}
+      >
+        <Support />
       </div>
 
       {/* Contact Section */}
