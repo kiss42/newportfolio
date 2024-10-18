@@ -1,27 +1,29 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ColorProvider, useColor } from './context/ColorContext';
 import Home from './components/Home';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Contact from './components/Contact';
-import Support from './components/Support';
+import ColorPicker from './components/ColorPicker';
 
-const App = () => {
+const AppContent = () => {
+  const { colorScheme } = useColor();
+
   return (
-    <Router>
-      <div className="bg-gray-900 min-h-screen">
-        <Routes>
-          {/* Redirecting root path '/' to Home component */}
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/skills" element={<Skills />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/support" element={<Support />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App" style={{ 
+      background: colorScheme.background, 
+      minHeight: '100vh',
+      color: colorScheme.text // This ensures text color is consistent throughout the app
+    }}>
+      <Home />
+      <ColorPicker />
+    </div>
   );
 };
+
+function App() {
+  return (
+    <ColorProvider>
+      <AppContent />
+    </ColorProvider>
+  );
+}
 
 export default App;

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
+import { useColor } from '../context/ColorContext';
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const { colorScheme } = useColor();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,26 +42,55 @@ const Contact = () => {
   };
 
   return (
-    <section>
+    <section className="py-12">
       <div className="max-w-3xl mx-auto px-6">
-        <h2 className="text-3xl font-bold text-center">Contact Me</h2>
+        <h2 className="text-3xl font-bold text-center mb-6" style={{ color: colorScheme.primary }}>Contact Me</h2>
 
         <form className="mt-6" onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block mb-2">Name</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-3 rounded bg-gray-700 text-white" required />
+            <label className="block mb-2" style={{ color: colorScheme.text }}>Name</label>
+            <input 
+              type="text" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              className="w-full p-3 rounded" 
+              style={{ backgroundColor: colorScheme.secondary, color: colorScheme.text }}
+              required 
+            />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Email</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-3 rounded bg-gray-700 text-white" required />
+            <label className="block mb-2" style={{ color: colorScheme.text }}>Email</label>
+            <input 
+              type="email" 
+              name="email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              className="w-full p-3 rounded" 
+              style={{ backgroundColor: colorScheme.secondary, color: colorScheme.text }}
+              required 
+            />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Message</label>
-            <textarea name="message" value={formData.message} onChange={handleChange} className="w-full p-3 rounded bg-gray-700 text-white" required />
+            <label className="block mb-2" style={{ color: colorScheme.text }}>Message</label>
+            <textarea 
+              name="message" 
+              value={formData.message} 
+              onChange={handleChange} 
+              className="w-full p-3 rounded" 
+              style={{ backgroundColor: colorScheme.secondary, color: colorScheme.text }}
+              required 
+            />
           </div>
-          <button type="submit" className="bg-purple-700 text-white py-2 px-6 rounded">{loading ? 'Sending...' : 'Send Message'}</button>
+          <button 
+            type="submit" 
+            className="py-2 px-6 rounded"
+            style={{ backgroundColor: colorScheme.primary, color: 'white' }}
+          >
+            {loading ? 'Sending...' : 'Send Message'}
+          </button>
         </form>
-        {feedbackMessage && <p className="mt-4 text-center text-red-500">{feedbackMessage}</p>}
+        {feedbackMessage && <p className="mt-4 text-center" style={{ color: colorScheme.primary }}>{feedbackMessage}</p>}
       </div>
     </section>
   );

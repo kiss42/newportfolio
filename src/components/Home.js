@@ -10,6 +10,7 @@ import Testimonials from './Testimonials';
 import AboutMe from './AboutMe';
 import Support from './Support'; // Import Support component
 import useObserver from '../utilities/useObserver'; // Custom hook for visibility
+import { useColor } from '../context/ColorContext'; // Import color context
 
 const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false); // Track if menu is open for mobile
@@ -19,6 +20,7 @@ const Home = () => {
   const projectsRef = useRef();
   const supportRef = useRef(); // Ref for Support section
   const contactRef = useRef();
+  const { color } = useColor(); // Get the color from context
 
   const isSkillsVisible = useObserver(skillsRef);
   const isProjectsVisible = useObserver(projectsRef);
@@ -45,8 +47,11 @@ const Home = () => {
     setMenuOpen(false); // Close the menu on mobile
   };
 
+  // Use the color in your styles
+  const gradientClass = `bg-gradient-to-br from-${color}-100 via-${color}-200 to-${color}-600`;
+
   return (
-    <div className="bg-gradient-to-br from-gray-100 via-purple-200 to-purple-600 min-h-screen">
+    <div className={`min-h-screen ${gradientClass}`}>
       {/* About Me Sidebar Menu */}
       <AboutMe ref={aboutMeRef} />
 
@@ -54,7 +59,7 @@ const Home = () => {
       <div className="sm:hidden fixed top-4 right-4 z-50">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="text-gray-700 hover:text-purple-700 text-3xl"
+          className="text-gray-700 hover:text-purple-700 text-3xl bg-transparent"
         >
           {menuOpen ? <AiOutlineClose /> : <AiOutlineMenu />}
         </button>
@@ -62,75 +67,31 @@ const Home = () => {
 
       {/* Navigation Bar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex flex-col sm:flex-row justify-center items-center sm:space-x-6 space-x-0 sm:space-y-0 space-y-4 p-4 w-full transition-transform duration-300 ${
-          menuOpen ? 'transform translate-y-0' : 'transform -translate-y-full sm:translate-y-0'
+        className={`fixed top-0 left-0 right-0 z-40 flex sm:flex-row justify-center items-center p-4 w-full transition-all duration-300 ${
+          menuOpen
+            ? 'flex-row flex-wrap bg-white bg-opacity-90 shadow-md'
+            : 'hidden sm:flex'
         }`}
       >
-        {/* Home link */}
-        <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
-            activeButton === 'home' ? 'border border-purple-700 text-purple-700' : ''
-          }`}
-          onClick={() => scrollToSection(document.getElementById('home'), 'home')}
-        >
-          <AiFillHome className="mr-2" />
-          Home
-        </button>
-
-        {/* About link */}
-        <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
-            activeButton === 'about' ? 'border border-purple-700 text-purple-700' : ''
-          }`}
-          onClick={handleAboutClick}
-        >
-          <FaUser className="mr-2" />
-          About
-        </button>
-
-        {/* Skills link */}
-        <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
-            activeButton === 'skills' ? 'border border-purple-700 text-purple-700' : ''
-          }`}
-          onClick={() => scrollToSection(skillsRef, 'skills')}
-        >
-          <GiSkills className="mr-2" />
-          Skills
-        </button>
-
-        {/* Projects link */}
-        <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
-            activeButton === 'projects' ? 'border border-purple-700 text-purple-700' : ''
-          }`}
-          onClick={() => scrollToSection(projectsRef, 'projects')}
-        >
-          <FaFolderOpen className="mr-2" />
-          Projects
-        </button>
-
-        {/* Support link */}
-        <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
-            activeButton === 'support' ? 'border border-purple-700 text-purple-700' : ''
-          }`}
-          onClick={() => scrollToSection(supportRef, 'support')}
-        >
-          <MdContactMail className="mr-2" />
-          Support
-        </button>
-
-        {/* Contact link */}
-        <button
-          className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 rounded bg-transparent ${
-            activeButton === 'contact' ? 'border border-purple-700 text-purple-700' : ''
-          }`}
-          onClick={() => scrollToSection(contactRef, 'contact')}
-        >
-          <MdContactMail className="mr-2" />
-          Contact
-        </button>
+        {[
+          { name: 'home', icon: AiFillHome, label: 'Home', ref: document.getElementById('home') },
+          { name: 'about', icon: FaUser, label: 'About', onClick: handleAboutClick },
+          { name: 'skills', icon: GiSkills, label: 'Skills', ref: skillsRef },
+          { name: 'projects', icon: FaFolderOpen, label: 'Projects', ref: projectsRef },
+          { name: 'support', icon: MdContactMail, label: 'Support', ref: supportRef },
+          { name: 'contact', icon: MdContactMail, label: 'Contact', ref: contactRef },
+        ].map((item) => (
+          <button
+            key={item.name}
+            className={`text-gray-700 hover:text-purple-700 text-lg flex items-center p-2 m-1 rounded bg-transparent ${
+              activeButton === item.name ? 'border border-purple-700 text-purple-700' : ''
+            }`}
+            onClick={item.onClick || (() => scrollToSection(item.ref, item.name))}
+          >
+            <item.icon className="mr-2" />
+            {item.label}
+          </button>
+        ))}
       </nav>
 
       {/* Add padding to the top so the content doesn't overlap with the navbar */}

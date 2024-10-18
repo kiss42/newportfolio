@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Importing arrow icons
 
-// Sample testimonials data
+// Updated testimonials data
 const testimonials = [
   {
     quote: "Steven helped our company set up a reliable IT support system. His professionalism and technical expertise were top-notch!",
@@ -13,6 +14,22 @@ const testimonials = [
   {
     quote: "Steven was instrumental in revamping our internal systems. He was efficient and delivered great results.",
     name: "David Lee, Operations Director at Global Enterprise"
+  },
+  {
+    quote: "The cybersecurity measures Steven implemented have significantly improved our data protection. Highly recommended!",
+    name: "Emily Chen, CISO at SecureNet Solutions"
+  },
+  {
+    quote: "Steven's cloud migration strategy saved us time and resources. His expertise in AWS was invaluable.",
+    name: "Robert Taylor, CEO at CloudFirst Technologies"
+  },
+  {
+    quote: "Our team's coding practices improved dramatically after Steven's consultation. He's a true software craftsman.",
+    name: "Sophia Rodriguez, Lead Developer at CodeMasters Inc."
+  },
+  {
+    quote: "Steven's ability to explain complex technical concepts to non-technical stakeholders was impressive. Great communicator!",
+    name: "James Wilson, Marketing Director at TechBridge Solutions"
   }
 ];
 
@@ -55,16 +72,16 @@ const TestimonialsCarousel = () => {
 
       {/* Previous and Next buttons */}
       <button
-        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-200 px-4 py-2 rounded-full hover:bg-gray-300"
+        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-600 transition-colors"
         onClick={prevTestimonial}
       >
-        &#9664; {/* Left Arrow */}
+        <FaArrowLeft /> {/* Professional Left Arrow */}
       </button>
       <button
-        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-200 px-4 py-2 rounded-full hover:bg-gray-300"
+        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-600 transition-colors"
         onClick={nextTestimonial}
       >
-        &#9654; {/* Right Arrow */}
+        <FaArrowRight /> {/* Professional Right Arrow */}
       </button>
 
       {/* Dots Indicator */}
