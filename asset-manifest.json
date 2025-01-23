@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/newportfolio/static/css/main.f758d113.css",
-    "main.js": "/newportfolio/static/js/main.f892492f.js",
+    "main.css": "/newportfolio/static/css/main.8019ea21.css",
+    "main.js": "/newportfolio/static/js/main.3a46f475.js",
     "static/media/Steven-Pierre-Resume.pdf": "/newportfolio/static/media/Steven-Pierre-Resume.72b4167d1b4d07d9def9.pdf",
     "static/media/profile.jpg": "/newportfolio/static/media/profile.d393068ec0957ef3ead7.jpg",
     "static/media/slick.svg": "/newportfolio/static/media/slick.2630a3e3eab21c607e21.svg",
@@ -9,11 +9,11 @@
     "static/media/slick.ttf": "/newportfolio/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/newportfolio/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/newportfolio/index.html",
-    "main.f758d113.css.map": "/newportfolio/static/css/main.f758d113.css.map",
-    "main.f892492f.js.map": "/newportfolio/static/js/main.f892492f.js.map"
+    "main.8019ea21.css.map": "/newportfolio/static/css/main.8019ea21.css.map",
+    "main.3a46f475.js.map": "/newportfolio/static/js/main.3a46f475.js.map"
   },
   "entrypoints": [
-    "static/css/main.f758d113.css",
-    "static/js/main.f892492f.js"
+    "static/css/main.8019ea21.css",
+    "static/js/main.3a46f475.js"
   ]
 }
