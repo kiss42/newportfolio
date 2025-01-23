@@ -41,34 +41,52 @@ const Projects = () => {
   return (
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: colorScheme.primary }}>My Projects</h2>
+        <h2 className="text-3xl font-bold text-center mb-8" style={{ color: colorScheme.primary }}>
+          My Projects
+        </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {projects.map((project, index) => (
-            <div 
-              key={index} 
-              className="project-card animate-fadeIn p-6 rounded-lg shadow-md"
-              style={{ 
-                backgroundColor: colorScheme.background.startsWith('linear-gradient') 
-                  ? 'white' 
+            <div
+              key={index}
+              className="p-4 rounded-lg flex flex-col items-center text-center transition-all duration-300 ease-in-out"
+              style={{
+                backgroundColor: colorScheme.background.startsWith('linear-gradient')
+                  ? 'rgba(255, 255, 255, 0.2)' // Transparent white for gradients
                   : colorScheme.background,
-                color: colorScheme.text
+                color: colorScheme.text,
               }}
             >
-              <div className="text-4xl mb-4 text-center" style={{ color: colorScheme.primary }}>{project.icon}</div>
-              <h3 className="text-xl font-bold text-center mb-2" style={{ color: colorScheme.primary }}>{project.title}</h3>
-              <p className="text-center mb-4">{project.description}</p>
-              <div className="text-center">
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold hover:underline"
-                  style={{ color: colorScheme.primary }}
-                >
-                  View Project
-                </a>
+              {/* Icon */}
+              <div
+                className="text-4xl mb-2"
+                style={{
+                  color: colorScheme.primary,
+                }}
+              >
+                {project.icon}
               </div>
+              {/* Title */}
+              <h3
+                className="text-lg font-bold"
+                style={{
+                  color: colorScheme.primary,
+                }}
+              >
+                {project.title}
+              </h3>
+              {/* Description */}
+              <p className="text-sm mb-4">{project.description}</p>
+              {/* Link */}
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold hover:underline transition-colors duration-300"
+                style={{ color: colorScheme.primary }}
+              >
+                View Project
+              </a>
             </div>
           ))}
         </div>

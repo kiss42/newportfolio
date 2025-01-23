@@ -6,10 +6,10 @@ export const useColor = () => useContext(ColorContext);
 
 export const colorSchemes = {
   default: {
-    background: 'linear-gradient(to bottom right, #f3e8ff, #e9d5ff, #d8b4fe)',
-    primary: '#9333ea',
-    secondary: '#d8b4fe',
-    text: '#1e293b',
+    background: 'black', // Default background
+    primary: '#9333ea', // Purple
+    secondary: '#6b21a8', // Dark purple
+    text: '#ffffff', // White text
   },
   navy: {
     background: '#1e3a8a',
@@ -34,6 +34,12 @@ export const colorSchemes = {
     primary: '#78716c',
     secondary: '#a8a29e',
     text: '#1e293b',
+  },
+  black: {
+    background: 'black',
+    primary: '#ffffff', // White for accents
+    secondary: '#444444', // Dark gray
+    text: '#ffffff', // White text
   },
 };
 
