@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/newportfolio/static/css/main.c371231b.css",
-    "main.js": "/newportfolio/static/js/main.55af1828.js",
-    "static/media/Steven-Pierre-Resume.pdf": "/newportfolio/static/media/Steven-Pierre-Resume.72b4167d1b4d07d9def9.pdf",
-    "static/media/profile.jpg": "/newportfolio/static/media/profile.d393068ec0957ef3ead7.jpg",
-    "static/media/slick.svg": "/newportfolio/static/media/slick.2630a3e3eab21c607e21.svg",
-    "static/media/slick.eot": "/newportfolio/static/media/slick.a4e97f5a2a64f0ab1323.eot",
-    "static/media/slick.ttf": "/newportfolio/static/media/slick.c94f7671dcc99dce43e2.ttf",
-    "static/media/slick.woff": "/newportfolio/static/media/slick.295183786cd8a1389865.woff",
-    "index.html": "/newportfolio/index.html",
-    "main.c371231b.css.map": "/newportfolio/static/css/main.c371231b.css.map",
-    "main.55af1828.js.map": "/newportfolio/static/js/main.55af1828.js.map"
+    "main.css": "/static/css/main.f11cc1e8.css",
+    "main.js": "/static/js/main.6ebf8718.js",
+    "static/media/Steven-Pierre-Resume.pdf": "/static/media/Steven-Pierre-Resume.72b4167d1b4d07d9def9.pdf",
+    "static/media/profile.jpg": "/static/media/profile.d393068ec0957ef3ead7.jpg",
+    "static/media/slick.svg": "/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
+    "index.html": "/index.html",
+    "main.f11cc1e8.css.map": "/static/css/main.f11cc1e8.css.map",
+    "main.6ebf8718.js.map": "/static/js/main.6ebf8718.js.map"
   },
   "entrypoints": [
-    "static/css/main.c371231b.css",
-    "static/js/main.55af1828.js"
+    "static/css/main.f11cc1e8.css",
+    "static/js/main.6ebf8718.js"
   ]
 }
