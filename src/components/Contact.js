@@ -84,8 +84,17 @@ const Contact = () => {
           </div>
           <button 
             type="submit" 
-            className="py-2 px-6 rounded"
-            style={{ backgroundColor: colorScheme.primary, color: 'white' }}
+            className="py-2 px-6 font-semibold transition-all"
+            style={{
+              backgroundColor: 'transparent',
+              color: colorScheme.primary,
+              border: 'none',
+              textDecoration: 'none',
+              outline: 'none',
+              boxShadow: 'none',
+              borderRadius: '0.5rem',
+              cursor: 'pointer'
+            }}
           >
             {loading ? 'Sending...' : 'Send Message'}
           </button>

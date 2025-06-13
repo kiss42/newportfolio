@@ -22,12 +22,6 @@ const projects = [
     icon: <FaMagic />, // Magic wand icon for SoulSite
   },
   {
-    title: 'Task Manager',
-    description: 'A simple task management app.',
-    link: 'https://task-manager.com',
-    icon: <FaCheckCircle />, // Check-circle icon for task manager
-  },
-  {
     title: 'Budgeting Tool',
     description: 'A budgeting tool to manage personal finances effectively.',
     link: 'https://kiss42.github.io/Budget-Tool/',

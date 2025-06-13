@@ -6,6 +6,8 @@ import Testimonials from './Testimonials';
 import AboutMe from './AboutMe';
 import Support from './Support';
 import Navbar from './Navbar';
+import WebsiteShowcase from './WebsiteShowcase';
+import { useColor } from '../context/ColorContext';
 
 const Home = () => {
   const [activeButton, setActiveButton] = useState('home');
@@ -14,22 +16,28 @@ const Home = () => {
   const projectsRef = useRef();
   const supportRef = useRef();
   const contactRef = useRef();
+  const webdevRef = useRef();
 
-  // Function to scroll to a section
+  const { colorScheme } = useColor();
+
   const scrollToSection = (ref, buttonName) => {
     setActiveButton(buttonName);
-    if (ref && ref.current) {
+    if (ref?.current) {
       window.scrollTo({
-        top: ref.current.offsetTop,
+        top: ref.current.offsetTop - 60,
         behavior: 'smooth',
       });
-    } else {
-      console.warn(`Ref for ${buttonName} is not defined`);
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen transition-colors duration-300"
+      style={{
+        backgroundColor: colorScheme.background,
+        color: colorScheme.text,
+      }}
+    >
       {/* About Me Sidebar */}
       <AboutMe ref={aboutMeRef} />
 
@@ -44,25 +52,43 @@ const Home = () => {
           projectsRef,
           supportRef,
           contactRef,
+          webdevRef,
         }}
       />
 
-      {/* Sections */}
-      <div className="pt-20"></div>
-      <div id="skills" ref={skillsRef} className="py-12 px-4">
-        <Skills />
-      </div>
-      <div id="projects" ref={projectsRef} className="py-12 px-4">
+      {/* Spacer for fixed navbar */}
+      <div className="pt-24"></div>
+
+      {/* === REORDERED SECTIONS BASED ON IMPORTANCE === */}
+
+      {/* Projects First */}
+      <div id="projects" ref={projectsRef} className="py-12 px-4 animate-slideInLeft">
         <Projects />
       </div>
-      <div id="support" ref={supportRef} className="py-12 px-4">
+
+      {/* Website Showcase */}
+      <div id="websites" ref={webdevRef} className="py-12 px-4 animate-fadeIn">
+        <WebsiteShowcase />
+      </div>
+
+      {/* Skills */}
+      <div id="skills" ref={skillsRef} className="py-12 px-4 animate-fadeIn">
+        <Skills />
+      </div>
+
+      {/* Testimonials */}
+      <div className="py-12 px-4 animate-fadeIn">
+        <Testimonials />
+      </div>
+
+      {/* Support */}
+      <div id="support" ref={supportRef} className="py-12 px-4 animate-slideInRight">
         <Support />
       </div>
-      <div id="contact" ref={contactRef} className="py-12 px-4">
+
+      {/* Contact */}
+      <div id="contact" ref={contactRef} className="py-12 px-4 animate-fadeIn">
         <Contact />
-      </div>
-      <div className="py-12">
-        <Testimonials />
       </div>
     </div>
   );
