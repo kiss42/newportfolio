@@ -56,7 +56,7 @@ export const colorSchemes = {
     isDark: true,
     background: '#000000',
     primary: '#ffffff',
-    secondary: '#444444',
+    secondary: '#8f8f8f', // light enough that gradients ending in it stay readable on black
     text: '#ffffff',
     onPrimary: '#000000',
     onSecondary: '#ffffff',
@@ -119,7 +119,8 @@ const write = (key, value) => {
 };
 
 export const ColorProvider = ({ children }) => {
-  const [schemeName, setSchemeName] = useState('default');
+  // New visitors start on the black theme; a saved choice from the picker overrides it.
+  const [schemeName, setSchemeName] = useState('black');
   const [custom, setCustom] = useState({ primary: '#9333ea', isDark: true });
   // A scheme shown temporarily while hovering a swatch; never persisted.
   const [preview, setPreview] = useState(null);
