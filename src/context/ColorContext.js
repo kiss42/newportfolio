@@ -56,7 +56,7 @@ export const colorSchemes = {
     isDark: true,
     background: '#000000',
     primary: '#ffffff',
-    secondary: '#8f8f8f', // light enough that gradients ending in it stay readable on black
+    secondary: '#cfcfcf', // light silver so gradient headlines keep strong contrast on black
     text: '#ffffff',
     onPrimary: '#000000',
     onSecondary: '#ffffff',

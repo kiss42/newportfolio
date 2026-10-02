@@ -84,7 +84,6 @@ function headSDF(x, y, z) {
   // Carve: eye sockets, the furrow between the eyes, and the mouth line.
   d = ssub(d, sdEllipsoid(x, y, z, EYE.left, [0.108, 0.108, 0.108]), 0.035);
   d = ssub(d, sdEllipsoid(x, y, z, EYE.right, [0.108, 0.108, 0.108]), 0.035);
-  d = ssub(d, sdEllipsoid(x, y, z, [0, 0.32, 0.44], [0.012, 0.1, 0.03]), 0.04); // faint groove, no frown
   d = ssub(d, mouthSDF(x, y, z), 0.03);
   return d;
 }
@@ -419,22 +418,14 @@ function makeTiara() {
 export function createDogHead({ resolution = 120, tiara = true, geometryData = null } = {}) {
   const head = new THREE.Group();
 
-  const furMaterial = new THREE.MeshPhysicalMaterial({
-    vertexColors: true,
-    roughness: 0.5,
-    metalness: 0,
-    sheen: 0.7,
-    sheenRoughness: 0.4,
-    sheenColor: new THREE.Color('#45434e'),
-    clearcoat: 0.12,
-    clearcoatRoughness: 0.45,
-  });
+  // Fur covers most of her on screen, so it uses the cheaper standard material; gloss is saved for eyes, nose and tiara.
+  const furMaterial = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.48, metalness: 0, envMapIntensity: 1.2 });
   // Pass `geometryData` (from buildHeadGeometryData, e.g. built in a worker) to skip the expensive step here.
   const skull = new THREE.Mesh(headGeometryFromData(geometryData || buildHeadGeometryData(resolution)), furMaterial);
   head.add(skull);
 
   const lidMaterial = new THREE.MeshStandardMaterial({ color: '#08080a', roughness: 0.5 });
-  lidMaterial.userData.fur = new THREE.MeshPhysicalMaterial({ color: '#0b0b0e', roughness: 0.5, sheen: 0.7, sheenRoughness: 0.4, sheenColor: new THREE.Color('#45434e') });
+  lidMaterial.userData.fur = new THREE.MeshStandardMaterial({ color: '#0b0b0e', roughness: 0.48, envMapIntensity: 1.2 });
   const eyeTexture = makeEyeTexture();
   // Both eyes look up at the viewer, slightly converged, like in the photo.
   // Open, even upper lids and smiling lower lids: a happy, bright-eyed look.
@@ -448,7 +439,7 @@ export function createDogHead({ resolution = 120, tiara = true, geometryData = n
   nose.rotation.x = 0.15;
   head.add(nose);
 
-  const earMaterial = new THREE.MeshPhysicalMaterial({ color: '#0b0b0e', roughness: 0.5, sheen: 0.7, sheenRoughness: 0.4, sheenColor: new THREE.Color('#45434e'), side: THREE.DoubleSide });
+  const earMaterial = new THREE.MeshStandardMaterial({ color: '#0b0b0e', roughness: 0.48, envMapIntensity: 1.2, side: THREE.DoubleSide });
   const earGeo = makeEarGeometry();
   const leftEar = new THREE.Mesh(earGeo, earMaterial);
   leftEar.position.set(-0.3, 0.42, -0.02);

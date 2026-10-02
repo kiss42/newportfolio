@@ -5,7 +5,10 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { buildHeadGeometryData, createDogHead } from './dogHead';
 import { createIdleAnimator } from './bellaIdle';
 
-const RESOLUTION = 120;
+const RESOLUTION = 100;
+// Cap pixel density: retina phones and laptops otherwise render up to 4x the pixels for little visible gain.
+const coarse = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+const DPR = coarse ? [1, 1.25] : [1, 1.5];
 
 // Builds the skull geometry in a Web Worker, falling back to the main thread if workers aren't available.
 function useBellaGeometry() {
@@ -82,7 +85,7 @@ function ParticleField({ color, count = 1400 }) {
   );
 }
 
-function Bella({ data, reducedMotion }) {
+function Bella({ data, reducedMotion, scratchRef, onTap }) {
   const group = useRef();
   const { viewport, camera, invalidate, size } = useThree();
   const wide = viewport.width > 7.5;
@@ -90,6 +93,13 @@ function Bella({ data, reducedMotion }) {
   const idle = useMemo(() => (head ? createIdleAnimator(head, { reducedMotion }) : null), [head, reducedMotion]);
   const lastPointer = useRef({ x: NaN, y: NaN });
   const ndc = useMemo(() => new THREE.Vector3(), []);
+
+  // Let the page start and stop head scratches.
+  useEffect(() => {
+    if (!scratchRef) return undefined;
+    scratchRef.current = idle ? (on) => { idle.scratch(on); invalidate(); } : null;
+    return () => { scratchRef.current = null; };
+  }, [idle, scratchRef, invalidate]);
 
   useEffect(() => {
     invalidate();
@@ -125,18 +135,27 @@ function Bella({ data, reducedMotion }) {
 
   if (!head) return null;
   return (
-    <group ref={group} position={position} scale={targetScale * 0.85}>
+    <group
+      ref={group}
+      position={position}
+      scale={targetScale * 0.85}
+      onPointerDown={(e) => {
+        // Tapping her starts scratches too (handy on phones).
+        e.stopPropagation();
+        onTap?.();
+      }}
+    >
       <primitive object={head} />
     </group>
   );
 }
 
-const HeroScene = ({ primary, active = true, reducedMotion = false }) => {
+const HeroScene = ({ primary, active = true, reducedMotion = false, scratchRef, onBellaTap }) => {
   const data = useBellaGeometry();
   return (
     <Canvas
       camera={{ position: [0, 0.2, 7], fov: 45 }}
-      dpr={[1, 2]}
+      dpr={DPR}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       frameloop={!active ? 'never' : reducedMotion ? 'demand' : 'always'}
       eventSource={typeof document !== 'undefined' ? document.body : undefined}
@@ -147,7 +166,7 @@ const HeroScene = ({ primary, active = true, reducedMotion = false }) => {
       <directionalLight position={[-3, 1.5, -2.5]} intensity={2.6} color={primary} />
       <directionalLight position={[3, 0.5, -2]} intensity={0.8} color={primary} />
       <directionalLight position={[-3, -1, 2]} intensity={0.6} color="#8ab4ff" />
-      <Bella data={data} reducedMotion={reducedMotion} />
+      <Bella data={data} reducedMotion={reducedMotion} scratchRef={scratchRef} onTap={onBellaTap} />
       <ParticleField color={primary} />
     </Canvas>
   );

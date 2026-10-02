@@ -15,8 +15,9 @@ const AppContent = () => {
     '--secondary': colorScheme.secondary,
     '--text': colorScheme.text,
     '--on-primary': colorScheme.onPrimary,
-    '--muted': withAlpha(colorScheme.text, 0.68),
-    '--faint': withAlpha(colorScheme.text, 0.4),
+    // Secondary text stays clearly readable: brighter on dark themes, where grey on black tends to sink.
+    '--muted': withAlpha(colorScheme.text, dark ? 0.84 : 0.76),
+    '--faint': withAlpha(colorScheme.text, dark ? 0.6 : 0.5),
     '--surface': dark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.55)',
     '--surface-strong': dark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.8)',
     '--border': dark ? 'rgba(255, 255, 255, 0.1)' : withAlpha(colorScheme.text, 0.12),

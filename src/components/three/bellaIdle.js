@@ -57,6 +57,9 @@ export function createIdleAnimator(head, { reducedMotion = false } = {}) {
 
   let squint = 0; // 0 open, 1 half-lidded
   let squintTarget = 0;
+  // Head scratches: eases 0 -> 1 while someone is scratching her.
+  let scratching = false;
+  let bliss = 0;
   let blink = 0;
   let t = 0;
 
@@ -176,13 +179,25 @@ export function createIdleAnimator(head, { reducedMotion = false } = {}) {
     }
   }
 
+  function scratch(on) {
+    if (on === scratching) return;
+    scratching = on;
+    if (!on) {
+      // Afterwards she opens her eyes and looks right at you, pleased.
+      steps = [];
+      wait = rand(0.5, 0.8);
+      glanceThenFollow(pointer.active ? pointer.seenX * 0.55 : 0, pointer.active ? pointer.seenY * 0.28 : 0.05, { follow: 0.9 });
+    }
+  }
+
   function update(dt) {
     dt = Math.min(dt, 0.05);
     t += dt;
     const motion = reducedMotion ? 0.25 : 1;
+    bliss = approach(bliss, scratching ? 1 : 0, scratching ? 3.5 : 2.2, dt);
 
-    // Run the beat script.
-    wait -= dt;
+    // Run the beat script (paused while she's enjoying scratches).
+    if (!scratching) wait -= dt;
     while (wait <= 0) {
       if (!steps.length) chooseBeat();
       const step = steps.shift();
@@ -192,7 +207,7 @@ export function createIdleAnimator(head, { reducedMotion = false } = {}) {
     }
 
     // Blinks: irregular, occasionally doubled.
-    if (t >= nextBlink) triggerBlink();
+    if (t >= nextBlink && bliss < 0.3) triggerBlink();
     const bt = t - blinkStart;
     const blinkDur = 0.16;
     let b = bt >= 0 && bt < blinkDur ? Math.sin((bt / blinkDur) * Math.PI) : 0;
@@ -213,6 +228,15 @@ export function createIdleAnimator(head, { reducedMotion = false } = {}) {
       base.pos.y + breath * 0.006 + drift(0.27, 0.15, 0.005) * motion,
       base.pos.z + drift(0.15, 0.09, 0.004) * motion
     );
+    // Scratches: chin up, leaning into the hand with a slow rhythmic rub.
+    if (bliss > 0.001) {
+      const rub = Math.sin(t * 5.5) * motion;
+      head.rotation.x += bliss * -0.1;
+      head.rotation.z += bliss * (0.17 + Math.sin(t * 1.7) * 0.04 * motion);
+      head.rotation.y += bliss * rub * 0.04;
+      head.position.x += bliss * rub * 0.008;
+      head.position.y += bliss * 0.01;
+    }
 
     // Eyes: fast saccades toward the gaze point, counter-rotating as the head catches up.
     const wantYaw = clampEye(gaze.yaw - headYaw.x, 0.36);
@@ -228,8 +252,9 @@ export function createIdleAnimator(head, { reducedMotion = false } = {}) {
     squint = approach(squint, squintTarget, 6, dt);
     eyes.forEach((e, i) => {
       // Upper lids follow the eyes' pitch slightly, like real lids do.
-      e.userData.upperLid.rotation.x = base.upper[i] + blink * 1.2 + squint * 0.5 - eye.pitch * 0.4;
-      e.userData.lowerLid.rotation.x = base.lower[i] - squint * 0.22 - blink * 0.1;
+      // In bliss the eyes close into happy crescents.
+      e.userData.upperLid.rotation.x = base.upper[i] + blink * 1.2 + squint * 0.5 - eye.pitch * 0.4 + bliss * 1.0;
+      e.userData.lowerLid.rotation.x = base.lower[i] - squint * 0.22 - blink * 0.1 - bliss * 0.3;
     });
 
     // Ears: soft secondary motion that lags behind head turns.
@@ -237,16 +262,20 @@ export function createIdleAnimator(head, { reducedMotion = false } = {}) {
     earLag.update(dt);
     ears.forEach((e, i) => {
       const side = i === 0 ? -1 : 1;
-      e.rotation.x = base.ears[i].x + earLag.x * side * 0.6 + Math.sin(t * 1.55 + i) * 0.006 * motion;
-      e.rotation.z = base.ears[i].z + earLag.x * 0.5;
+      // Relaxed, happily wiggling ears during scratches.
+      const wiggle = bliss * Math.sin(t * 8 + i * 1.7) * 0.05 * motion;
+      e.rotation.x = base.ears[i].x + earLag.x * side * 0.6 + Math.sin(t * 1.55 + i) * 0.006 * motion + bliss * 0.22 + wiggle;
+      e.rotation.z = base.ears[i].z + earLag.x * 0.5 - side * bliss * 0.18;
     });
 
     // Tongue just rides along with her breathing.
     if (tongue && base.tongue) {
-      tongue.position.y = base.tongue.y - (breath * 0.5 + 0.5) * 0.004;
-      tongue.scale.y = base.tongue.s * (1 + (breath * 0.5 + 0.5) * 0.03);
+      // Happy panting while being scratched; the tongue lolls out a bit more.
+      const pant = bliss * (Math.sin(t * 9) * 0.5 + 0.5) * motion;
+      tongue.position.y = base.tongue.y - (breath * 0.5 + 0.5) * 0.004 - bliss * 0.012 - pant * 0.006;
+      tongue.scale.y = base.tongue.s * (1 + (breath * 0.5 + 0.5) * 0.03 + bliss * 0.12 + pant * 0.06);
     }
   }
 
-  return { update, setPointer, clearPointer: () => { pointer.active = false; } };
+  return { update, setPointer, scratch, clearPointer: () => { pointer.active = false; } };
 }
