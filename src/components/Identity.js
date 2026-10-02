@@ -5,6 +5,7 @@ import SectionHeading from './ui/SectionHeading';
 import Reveal from './ui/Reveal';
 import TiltCard from './ui/TiltCard';
 import { story, stats, journey, values } from '../data/profile';
+import FunTerminal from './FunTerminal';
 
 const Counter = ({ value, suffix }) => {
   const ref = useRef(null);
@@ -96,6 +97,8 @@ const Identity = () => (
           </Reveal>
         ))}
       </div>
+
+      <FunTerminal />
     </div>
   </section>
 );

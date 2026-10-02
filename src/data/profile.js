@@ -5,7 +5,7 @@ export const profile = {
   name: 'Steven Pierre',
   firstName: 'Steven',
   headline: "I fix what's broken and build what's next.",
-  roles: ['Independent Contractor', 'React Developer', 'IT Support Specialist', 'Problem Solver'],
+  roles: ['Independent Contractor', 'Full-Stack Developer', 'Linux Operator', 'IT Support Specialist', 'Problem Solver'],
   intro:
     'A decade of keeping people and machines running, now pointed at building fast, modern web experiences with React and Node.js.',
   github: 'https://github.com/kiss42',
@@ -20,7 +20,7 @@ export const story = [
 export const stats = [
   { value: 10, suffix: '+', label: 'Years in IT' },
   { value: 6, suffix: '', label: 'Live builds' },
-  { value: 13, suffix: '', label: 'Tools in my kit' },
+  { value: 15, suffix: '', label: 'Tools in my kit' },
 ];
 
 export const journey = [

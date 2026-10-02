@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
-import { FaReact, FaJs, FaNodeJs, FaHtml5, FaCss3Alt, FaFigma, FaWordpress, FaGitAlt } from 'react-icons/fa';
-import { SiTailwindcss, SiAdobephotoshop, SiAdobeillustrator, SiTypescript, SiNextdotjs } from 'react-icons/si';
+import { FaReact, FaJs, FaNodeJs, FaHtml5, FaCss3Alt, FaFigma, FaWordpress, FaGitAlt, FaLinux } from 'react-icons/fa';
+import { SiTailwindcss, SiAdobephotoshop, SiAdobeillustrator, SiTypescript, SiNextdotjs, SiGnubash } from 'react-icons/si';
 import SectionHeading from './ui/SectionHeading';
 import Reveal from './ui/Reveal';
 
@@ -19,12 +19,15 @@ const skills = [
   { title: 'TypeScript', icon: SiTypescript },
   { title: 'Next.js', icon: SiNextdotjs },
   { title: 'Git', icon: FaGitAlt },
+  { title: 'Linux', icon: FaLinux },
+  { title: 'Bash', icon: SiGnubash },
 ];
 
 const groups = [
-  { title: 'Build', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Node.js', 'HTML5', 'CSS3', 'Tailwind CSS'] },
+  { title: 'Front end', items: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS'] },
+  { title: 'Back end & Linux', items: ['Node.js', 'Linux', 'Bash', 'Git'] },
   { title: 'Design', items: ['Figma', 'Photoshop', 'Illustrator', 'WordPress'] },
-  { title: 'Support', items: ['Desktop support', 'Hardware repair', 'Preventative maintenance', 'Customer service', 'Git workflows'] },
+  { title: 'Support', items: ['Desktop support', 'Hardware repair', 'Preventative maintenance', 'Customer service'] },
 ];
 
 // Evenly distributes points on a unit sphere (Fibonacci lattice).

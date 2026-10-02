@@ -1,9 +1,29 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiRefreshCw, FiMapPin, FiTool, FiCode } from 'react-icons/fi';
+import { FiRefreshCw, FiTool, FiLayers, FiTerminal, FiClock } from 'react-icons/fi';
 import TiltCard from './ui/TiltCard';
 import profileImage from '../assets/profile.jpg';
 import { profile } from '../data/profile';
+
+// Tiny Haitian flag: blue over red, with a white center panel.
+const HaitiFlag = () => (
+  <span
+    role="img"
+    aria-label="Haitian flag"
+    className="relative inline-block w-[1.1rem] h-[0.75rem] rounded-[2px] overflow-hidden align-middle"
+    style={{ background: 'linear-gradient(#00209f 50%, #d21034 50%)' }}
+  >
+    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.4rem] h-[0.3rem] bg-white rounded-[1px]" />
+  </span>
+);
+
+const quickFacts = [
+  { icon: <HaitiFlag />, title: 'Proudly Haitian', text: 'My code comes extra seasoned. Pikliz on the side, no extra charge.' },
+  { icon: <FiLayers />, title: 'Front end + back end', text: 'I make it pretty, then I make it work. Sometimes at 2 a.m., in that order.' },
+  { icon: <FiTerminal />, title: 'Linux operator', text: 'sudo is my love language. Dark mode is not a preference, it is a lifestyle.' },
+  { icon: <FiTool />, title: 'Independent contractor', text: 'IT service, repairs and web builds across numerous projects.' },
+  { icon: <FiClock />, title: '10+ years in IT', text: 'Turned it off and on again roughly 10,000 times. It works.' },
+];
 
 // A holographic "ID card" that tilts toward the pointer and flips to reveal quick facts.
 const ProfileCard3D = () => {
@@ -55,34 +75,22 @@ const ProfileCard3D = () => {
             style={{
               transform: 'rotateY(180deg)',
               borderColor: 'var(--border)',
-              background: 'linear-gradient(160deg, var(--secondary), var(--bg) 75%)',
+              background: 'linear-gradient(160deg, color-mix(in srgb, var(--secondary) 35%, var(--bg)), var(--bg) 75%)',
               color: 'var(--text)',
               boxShadow: '0 40px 80px -30px var(--glow)',
             }}
           >
-            <p className="eyebrow mb-5">Quick facts</p>
-            <ul className="space-y-5 text-[0.95rem] flex-1">
-              <li className="flex gap-3">
-                <FiTool className="mt-1 shrink-0 text-accent" />
-                <span>
-                  <strong className="block">Independent Contractor</strong>
-                  <span className="text-muted">IT service, repairs &amp; web builds across many projects</span>
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <FiCode className="mt-1 shrink-0 text-accent" />
-                <span>
-                  <strong className="block">Freelance React Developer</strong>
-                  <span className="text-muted">React · Node.js · performance-first builds</span>
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <FiMapPin className="mt-1 shrink-0 text-accent" />
-                <span>
-                  <strong className="block">10+ years in IT</strong>
-                  <span className="text-muted">Desktop support to full builds</span>
-                </span>
-              </li>
+            <p className="eyebrow mb-4">Quick facts</p>
+            <ul className="space-y-3 text-[0.82rem] leading-snug flex-1">
+              {quickFacts.map((f) => (
+                <li key={f.title} className="flex gap-3">
+                  <span className="mt-0.5 shrink-0 text-accent">{f.icon}</span>
+                  <span>
+                    <strong className="block text-[0.9rem]">{f.title}</strong>
+                    <span className="text-muted">{f.text}</span>
+                  </span>
+                </li>
+              ))}
             </ul>
             <p className="font-mono text-xs text-muted flex items-center gap-2">
               <FiRefreshCw /> tap to flip back
