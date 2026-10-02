@@ -12,7 +12,7 @@ const Projects = () => (
         Personal projects where I sharpen my React and JavaScript craft — each one live and clickable.
       </SectionHeading>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {projects.map((project, i) => {
           const Icon = project.icon;
           return (

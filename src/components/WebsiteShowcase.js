@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 import { FiArrowUpRight, FiMapPin } from 'react-icons/fi';
 import lotusNailzImg from '../assets/lotus-nailz.png';
 import MalilunePreview from './MalilunePreview';
+import SoulSitePreview from './SoulSitePreview';
 import SectionHeading from './ui/SectionHeading';
 import Reveal from './ui/Reveal';
 
@@ -17,6 +18,17 @@ const sites = [
     url: 'https://witch-coven.vercel.app/',
     domain: 'witch-coven.vercel.app',
     features: ['Crystal-ball prophecies', 'Three-card tarot spread', 'Page-turning grimoire', 'Live moon phase', 'Ancestor altar candles'],
+  },
+  {
+    title: 'SoulSite',
+    kicker: 'Tarot & numerology app',
+    description:
+      'A calm, ad-free space for tarot, numerology, astrology, and dream reflection — built to help people notice their own patterns, not predict their future. Free, with no account required.',
+    tagline: '“Reflection, not prediction.”',
+    preview: <SoulSitePreview />,
+    url: 'https://soulsite-roan.vercel.app/',
+    domain: 'soulsite-roan.vercel.app',
+    features: ['1, 3 & 5-card tarot', 'Numerology', 'Astrology profile', 'Angel numbers', 'Dream reflection'],
   },
   {
     title: 'Lotus Nailz',

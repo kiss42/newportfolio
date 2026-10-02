@@ -1,5 +1,5 @@
 // Everything personal lives here so the site is easy to update in one place.
-import { FaGlobe, FaFilm, FaMagic, FaMoneyBillWave } from 'react-icons/fa';
+import { FaGlobe, FaFilm, FaMoneyBillWave } from 'react-icons/fa';
 
 export const profile = {
   name: 'Steven Pierre',
@@ -19,7 +19,7 @@ export const story = [
 
 export const stats = [
   { value: 10, suffix: '+', label: 'Years in IT' },
-  { value: 5, suffix: '', label: 'Live builds' },
+  { value: 6, suffix: '', label: 'Live builds' },
   { value: 13, suffix: '', label: 'Tools in my kit' },
 ];
 
@@ -66,13 +66,6 @@ export const projects = [
     link: 'https://kiss42.github.io/movie-review-template/',
     icon: FaFilm,
     tags: ['JavaScript', 'CSS'],
-  },
-  {
-    title: 'SoulSite',
-    description: 'A mystical-themed web app offering spiritual tools.',
-    link: 'https://soulsite-roan.vercel.app/',
-    icon: FaMagic,
-    tags: ['React', 'UI'],
   },
   {
     title: 'Budgeting Tool',
