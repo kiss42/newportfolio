@@ -212,3 +212,22 @@ a {
 .hue-slider:focus-visible {
   box-shadow: 0 0 0 3px var(--glow);
 }
+
+/* ---------- Malilune preview ---------- */
+.malilune-star {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.malilune-orb {
+  animation: orb-pulse 4s ease-in-out infinite;
+}
+
+@keyframes orb-pulse {
+  0%, 100% { filter: brightness(1); transform: scale(1); }
+  50% { filter: brightness(1.25); transform: scale(1.03); }
+}
