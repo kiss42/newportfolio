@@ -44,7 +44,7 @@ const ProfileCard3D = () => {
               </span>
             </div>
             <div className="absolute bottom-6 left-6 right-6 text-white" style={{ transform: 'translateZ(40px)' }}>
-              <p className="font-mono text-[0.7rem] tracking-[0.2em] uppercase opacity-70 mb-2">Developer · IT Specialist</p>
+              <p className="font-mono text-[0.7rem] tracking-[0.2em] uppercase opacity-70 mb-2">Independent Contractor</p>
               <h3 className="font-display text-3xl font-extrabold leading-none">{profile.name}</h3>
             </div>
           </div>
@@ -65,8 +65,8 @@ const ProfileCard3D = () => {
               <li className="flex gap-3">
                 <FiTool className="mt-1 shrink-0 text-accent" />
                 <span>
-                  <strong className="block">Field Service Technician</strong>
-                  <span className="text-muted">AgusIT — repairs &amp; preventative maintenance</span>
+                  <strong className="block">Independent Contractor</strong>
+                  <span className="text-muted">IT service, repairs &amp; web builds across many projects</span>
                 </span>
               </li>
               <li className="flex gap-3">

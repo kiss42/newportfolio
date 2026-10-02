@@ -5,7 +5,7 @@ export const profile = {
   name: 'Steven Pierre',
   firstName: 'Steven',
   headline: "I fix what's broken and build what's next.",
-  roles: ['React Developer', 'IT Support Specialist', 'Field Service Technician', 'Problem Solver'],
+  roles: ['Independent Contractor', 'React Developer', 'IT Support Specialist', 'Problem Solver'],
   intro:
     'A decade of keeping people and machines running, now pointed at building fast, modern web experiences with React and Node.js.',
   github: 'https://github.com/kiss42',
@@ -13,7 +13,7 @@ export const profile = {
 
 export const story = [
   "Hi, I'm Steven. For about ten years I've been the person people call when technology stops cooperating — desktop support, hardware repair, and the patient walkthroughs that turn a frustrated user into a confident one.",
-  "Today I'm a Field Service Technician at AgusIT, managing customer equipment repairs and preventative maintenance while making sure every visit ends with a happy customer.",
+  "Today I'm an independent contractor working across numerous projects — on-site equipment repair and preventative maintenance, workstation setups, and troubleshooting — making sure every job ends with a happy client.",
   "On the other side of my work, I'm a freelance React developer. I modernize web apps with React and Node.js, obsessing over speed, performance, and the small details that make a site feel good to use.",
 ];
 
@@ -25,23 +25,23 @@ export const stats = [
 
 export const journey = [
   {
-    title: 'IT Support',
+    title: 'Customer Service & Sales',
     place: 'Where it started',
-    text: 'Troubleshooting, setups, and help-desk work — learning that tech is really about people.',
+    text: 'Years at Target and in sales taught me that technology is really about people.',
   },
   {
-    title: 'Desktop Support Technician',
-    place: 'Leveling up',
-    text: 'Owning end-user environments, hardware, and the fixes that keep teams productive.',
+    title: 'Computer Repair Technician',
+    place: 'DeWitt and DeWitt',
+    text: 'Deploying workstations, testing hardware, and finding cost-effective repairs and upgrades.',
   },
   {
-    title: 'Field Service Technician',
-    place: 'AgusIT · Now',
-    text: 'On-site equipment repairs and preventative maintenance with a customer-first mindset.',
+    title: 'Independent Contractor',
+    place: 'Self-employed · Now',
+    text: 'IT service, equipment repair, and preventative maintenance across numerous client projects.',
   },
   {
-    title: 'Freelance React Developer',
-    place: 'Independent · Now',
+    title: 'React Developer',
+    place: 'Freelance · Now',
     text: 'Modernizing web apps with React and Node.js, focused on speed and performance.',
   },
 ];
