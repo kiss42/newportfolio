@@ -50,7 +50,6 @@ function hash3(x, y, z) {
 }
 
 export const EYE = { left: [-0.195, 0.075, 0.392], right: [0.2, 0.088, 0.388], radius: 0.098 };
-const MOUTH_Y = -0.252;
 const MOUTH_PINK = new THREE.Color('#5a1a26');
 const LIP = new THREE.Color('#060608');
 
@@ -137,7 +136,9 @@ function coatColor(x, y, z, out) {
   return out;
 }
 
-function buildHeadGeometry(resolution) {
+// Polygonizes the skull and paints the coat. Pure math with no DOM access, so it can run in a Web Worker.
+// Returns plain typed arrays: { position, normal, color }.
+export function buildHeadGeometryData(resolution = 120) {
   const mc = new MarchingCubes(resolution, new THREE.MeshBasicMaterial(), false, false, 400000);
   mc.isolation = 0;
   const { size, size2, field } = mc;
@@ -155,24 +156,30 @@ function buildHeadGeometry(resolution) {
   }
   mc.update();
 
-  // Copy the generated triangles into a standalone, right-sized geometry.
+  // Copy the generated triangles into right-sized arrays.
   const count = mc.count;
   const src = mc.geometry;
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(src.attributes.position.array.slice(0, count * 3), 3));
-  geometry.setAttribute('normal', new THREE.BufferAttribute(src.attributes.normal.array.slice(0, count * 3), 3));
-  const colors = new Float32Array(count * 3);
-  const pos = geometry.attributes.position.array;
+  const position = src.attributes.position.array.slice(0, count * 3);
+  const normal = src.attributes.normal.array.slice(0, count * 3);
+  const color = new Float32Array(count * 3);
   const c = new THREE.Color();
   for (let i = 0; i < count; i++) {
-    coatColor(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2], c);
-    colors[i * 3] = c.r;
-    colors[i * 3 + 1] = c.g;
-    colors[i * 3 + 2] = c.b;
+    coatColor(position[i * 3], position[i * 3 + 1], position[i * 3 + 2], c);
+    color[i * 3] = c.r;
+    color[i * 3 + 1] = c.g;
+    color[i * 3 + 2] = c.b;
   }
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   mc.geometry.dispose();
   mc.material.dispose();
+  return { position, normal, color };
+}
+
+function headGeometryFromData({ position, normal, color }) {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(position, 3));
+  geometry.setAttribute('normal', new THREE.BufferAttribute(normal, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(color, 3));
+  geometry.computeBoundingSphere();
   return geometry;
 }
 
@@ -404,12 +411,12 @@ function makeTiara() {
 }
 
 /**
- * Builds the dog head. Returns a THREE.Group with userData handles for animation:
+ * Builds the dog head (Bella). Returns a THREE.Group with userData handles for animation:
  *   userData.eyes  -> [leftEyeGroup, rightEyeGroup] (rotate `.userData.ball` to look around)
  *   userData.ears  -> [leftEar, rightEar] (rotate to perk/flop)
- *   userData.brows -> unused placeholder for future expression rigs
+ *   userData.nose, userData.tongue, userData.tiara -> meshes/groups for secondary motion or toggling
  */
-export function createDogHead({ resolution = 120, tiara = true } = {}) {
+export function createDogHead({ resolution = 120, tiara = true, geometryData = null } = {}) {
   const head = new THREE.Group();
 
   const furMaterial = new THREE.MeshPhysicalMaterial({
@@ -422,7 +429,8 @@ export function createDogHead({ resolution = 120, tiara = true } = {}) {
     clearcoat: 0.12,
     clearcoatRoughness: 0.45,
   });
-  const skull = new THREE.Mesh(buildHeadGeometry(resolution), furMaterial);
+  // Pass `geometryData` (from buildHeadGeometryData, e.g. built in a worker) to skip the expensive step here.
+  const skull = new THREE.Mesh(headGeometryFromData(geometryData || buildHeadGeometryData(resolution)), furMaterial);
   head.add(skull);
 
   const lidMaterial = new THREE.MeshStandardMaterial({ color: '#08080a', roughness: 0.5 });

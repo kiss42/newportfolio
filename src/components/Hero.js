@@ -85,8 +85,6 @@ const Hero = () => {
             <Suspense fallback={<Fallback />}>
               <HeroScene
                 primary={colorScheme.primary}
-                secondary={colorScheme.secondary}
-                isDark={colorScheme.isDark}
                 active={inView}
                 reducedMotion={!!reduce}
               />
@@ -95,6 +93,19 @@ const Hero = () => {
         ) : (
           <Fallback />
         )}
+      </motion.div>
+
+      {/* Caption for Bella, beside her on desktop */}
+      <motion.div className="hidden lg:block absolute z-10 right-[14%] bottom-[13%] pointer-events-none" style={{ opacity: contentOpacity }}>
+        <motion.div
+          className="glass rounded-full px-4 py-2 flex items-center gap-2 text-sm"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.2, duration: 0.8 }}
+        >
+          <span className="font-semibold">Princess Bella</span>
+          <span className="text-muted">· keeping an eye on you</span>
+        </motion.div>
       </motion.div>
 
       {/* Keeps the headline readable over the scene on small screens */}
@@ -112,7 +123,7 @@ const Hero = () => {
       />
 
       <motion.div
-        className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 pb-24 pt-40 lg:py-0 pointer-events-none"
+        className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 pb-24 pt-[22.5rem] lg:py-0 pointer-events-none"
         style={{ y: contentY, opacity: contentOpacity }}
       >
         <motion.div variants={container} initial="hidden" animate="show" className="max-w-2xl pointer-events-auto">
