@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/newportfolio/static/css/main.dee26195.css",
-    "main.js": "/newportfolio/static/js/main.a596de89.js",
+    "main.css": "/newportfolio/static/css/main.43500c29.css",
+    "main.js": "/newportfolio/static/js/main.92318d63.js",
     "static/js/22.8ca745a4.chunk.js": "/newportfolio/static/js/22.8ca745a4.chunk.js",
     "static/js/707.7a0c1224.chunk.js": "/newportfolio/static/js/707.7a0c1224.chunk.js",
     "static/media/lotus-nailz.png": "/newportfolio/static/media/lotus-nailz.c56f705e8d30532215fa.png",
     "static/media/Steven-Pierre-Resume.pdf": "/newportfolio/static/media/Steven-Pierre-Resume.c2670a7522105a841b64.pdf",
     "static/media/profile.jpg": "/newportfolio/static/media/profile.d393068ec0957ef3ead7.jpg",
     "index.html": "/newportfolio/index.html",
-    "main.dee26195.css.map": "/newportfolio/static/css/main.dee26195.css.map",
-    "main.a596de89.js.map": "/newportfolio/static/js/main.a596de89.js.map",
+    "main.43500c29.css.map": "/newportfolio/static/css/main.43500c29.css.map",
+    "main.92318d63.js.map": "/newportfolio/static/js/main.92318d63.js.map",
     "22.8ca745a4.chunk.js.map": "/newportfolio/static/js/22.8ca745a4.chunk.js.map",
     "707.7a0c1224.chunk.js.map": "/newportfolio/static/js/707.7a0c1224.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.dee26195.css",
-    "static/js/main.a596de89.js"
+    "static/css/main.43500c29.css",
+    "static/js/main.92318d63.js"
   ]
 }
