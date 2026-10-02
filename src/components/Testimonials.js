@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'; // Importing arrow icons
+import React, { useCallback, useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import SectionHeading from './ui/SectionHeading';
 
-// Updated testimonials data
 const testimonials = [
   {
     quote: "Steven helped our company set up a reliable IT support system. His professionalism and technical expertise were top-notch!",
@@ -33,68 +34,104 @@ const testimonials = [
   }
 ];
 
-const TestimonialsCarousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+// Shortest signed distance between two indices on a loop.
+const loopOffset = (i, current, n) => {
+  let d = i - current;
+  if (d > n / 2) d -= n;
+  if (d < -n / 2) d += n;
+  return d;
+};
 
-  // Change slide every 5 seconds
+const Testimonials = () => {
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
+  const n = testimonials.length;
+
+  const next = useCallback(() => setCurrent((c) => (c + 1) % n), [n]);
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + n) % n), [n]);
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextTestimonial();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [currentIndex]);
-
-  // Go to the next testimonial
-  const nextTestimonial = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  // Go to the previous testimonial
-  const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
-    );
-  };
+    if (paused || reduce) return undefined;
+    const id = setInterval(next, 6000);
+    return () => clearInterval(id);
+  }, [paused, reduce, next, current]);
 
   return (
-    <div className="relative max-w-3xl mx-auto py-12">
-      {/* Current testimonial */}
-      <div className="text-center transition-opacity duration-1000">
-        <p className="text-xl italic text-gray-800 mb-4">
-          "{testimonials[currentIndex].quote}"
-        </p>
-        <p className="text-lg font-bold text-purple-700">
-          — {testimonials[currentIndex].name}
-        </p>
-      </div>
+    <section id="testimonials" className="relative py-28 sm:py-36 px-5 sm:px-8 overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <SectionHeading eyebrow="05 — Kind words" title="What people say." align="center" />
 
-      {/* Previous and Next buttons */}
-      <button
-        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-600 transition-colors"
-        onClick={prevTestimonial}
-      >
-        <FaArrowLeft /> {/* Professional Left Arrow */}
-      </button>
-      <button
-        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-purple-700 text-white px-4 py-2 rounded-full hover:bg-purple-600 transition-colors"
-        onClick={nextTestimonial}
-      >
-        <FaArrowRight /> {/* Professional Right Arrow */}
-      </button>
+        <div
+          className="relative h-[22rem] sm:h-[20rem]"
+          style={{ perspective: 1200 }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className="absolute inset-0 preserve-3d">
+            {testimonials.map((t, i) => {
+              const offset = loopOffset(i, current, n);
+              const abs = Math.abs(offset);
+              const [author, role] = t.name.split(', ');
+              return (
+                <motion.figure
+                  key={t.name}
+                  className="absolute left-1/2 top-0 w-[86%] sm:w-[34rem] -ml-[43%] sm:-ml-[17rem] h-full rounded-3xl p-7 sm:p-9 flex flex-col border cursor-pointer"
+                  style={{
+                    // Solid base under the translucent surface so stacked cards don't show through each other.
+                    background: `linear-gradient(${offset === 0 ? 'var(--surface-strong)' : 'var(--surface)'}, ${offset === 0 ? 'var(--surface-strong)' : 'var(--surface)'}), var(--bg)`,
+                    borderColor: offset === 0 ? 'var(--primary)' : 'var(--border)',
+                    boxShadow: offset === 0 ? '0 40px 80px -40px var(--glow)' : 'none',
+                    pointerEvents: abs > 2 ? 'none' : 'auto',
+                  }}
+                  animate={{
+                    x: `${offset * 62}%`,
+                    z: -abs * 180,
+                    rotateY: offset * -28,
+                    opacity: abs > 2 ? 0 : 1,
+                    zIndex: 10 - abs,
+                  }}
+                  transition={{ duration: reduce ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  onClick={() => setCurrent(i)}
+                  aria-hidden={offset !== 0}
+                >
+                  <div className="flex flex-col h-full transition-opacity duration-500" style={{ opacity: 1 - abs * 0.45 }}>
+                    <span className="font-display text-7xl leading-none text-accent h-10">“</span>
+                    <blockquote className="flex-1 text-lg sm:text-xl leading-relaxed mt-2">{t.quote}</blockquote>
+                    <figcaption className="mt-5">
+                      <div className="font-bold">{author}</div>
+                      <div className="text-muted text-sm">{role}</div>
+                    </figcaption>
+                  </div>
+                </motion.figure>
+              );
+            })}
+          </div>
+        </div>
 
-      {/* Dots Indicator */}
-      <div className="flex justify-center mt-4 space-x-2">
-        {testimonials.map((_, index) => (
-          <div
-            key={index}
-            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-purple-700' : 'bg-gray-400'}`}
-          ></div>
-        ))}
+        <div className="flex items-center justify-center gap-5 mt-12">
+          <button type="button" onClick={prev} className="btn btn-ghost !p-3" aria-label="Previous testimonial">
+            <FiArrowLeft />
+          </button>
+          <div className="flex gap-2">
+            {testimonials.map((_, i) => (
+              <button
+                type="button"
+                key={i}
+                onClick={() => setCurrent(i)}
+                aria-label={`Show testimonial ${i + 1}`}
+                className="h-2 rounded-full transition-all duration-300"
+                style={{ width: i === current ? 28 : 8, background: i === current ? 'var(--primary)' : 'var(--border)' }}
+              />
+            ))}
+          </div>
+          <button type="button" onClick={next} className="btn btn-ghost !p-3" aria-label="Next testimonial">
+            <FiArrowRight />
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default TestimonialsCarousel;
+export default Testimonials;

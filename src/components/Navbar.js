@@ -1,89 +1,118 @@
-import React from 'react';
-import { AiFillHome } from 'react-icons/ai';
-import { FaUser, FaFolderOpen, FaLaptopCode } from 'react-icons/fa';
-import { GiSkills } from 'react-icons/gi';
-import { MdContactMail } from 'react-icons/md';
-import { BiSupport } from 'react-icons/bi';
-import { RiTeamLine } from 'react-icons/ri';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { FiMenu, FiX } from 'react-icons/fi';
 import profileImage from '../assets/profile.jpg';
-import { useColor } from '../context/ColorContext';
 
-// Utility: checks if color is "white" or very light for visibility fix
-function isLightColor(color) {
-  if (!color) return false;
-  const c = color.toLowerCase();
-  if (c === "#fff" || c === "#ffffff" || c === "white") return true;
-  if (c.startsWith('#') && c.length === 7) {
-    const r = parseInt(c.slice(1, 3), 16);
-    const g = parseInt(c.slice(3, 5), 16);
-    const b = parseInt(c.slice(5, 7), 16);
-    return r > 220 && g > 220 && b > 220;
-  }
-  return false;
-}
+const links = [
+  { id: 'about', label: 'About' },
+  { id: 'projects', label: 'Work' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'testimonials', label: 'Kind words' },
+  { id: 'contact', label: 'Contact' },
+];
 
-const Navbar = ({ aboutMeRef, activeButton, setActiveButton, scrollToSection, refs }) => {
-  const { colorScheme } = useColor();
+const sectionIds = ['home', 'about', 'projects', 'websites', 'skills', 'testimonials', 'support', 'contact'];
 
-  const handleAboutClick = () => {
-    aboutMeRef.current?.openMenu();
-    setActiveButton('about');
-  };
+const Navbar = () => {
+  const [active, setActive] = useState('home');
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const navItems = [
-    { name: 'projects', icon: FaFolderOpen, label: 'Projects', ref: refs.projectsRef },
-    { name: 'websites', icon: FaLaptopCode, label: 'Websites', ref: refs.webdevRef },
-    { name: 'skills', icon: GiSkills, label: 'Skills', ref: refs.skillsRef },
-    { name: 'testimonials', icon: RiTeamLine, label: 'Testimonials', ref: null },
-    { name: 'support', icon: BiSupport, label: 'Support', ref: refs.supportRef },
-    { name: 'contact', icon: MdContactMail, label: 'Contact', ref: refs.contactRef },
-    { name: 'about', icon: FaUser, label: 'About', onClick: handleAboutClick },
-  ];
+  // Scroll-spy: highlight the link for the section currently in the middle of the viewport.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            setActive(id === 'websites' ? 'projects' : id);
+          }
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
 
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 py-4 px-6 flex justify-between items-center z-20 backdrop-blur-md"
-      style={{
-        backgroundColor: 'transparent',
-        color: colorScheme.text,
-      }}
-    >
-      {/* Profile Image - Sidebar Toggle */}
-      <div
-        className="w-12 h-12 rounded-full overflow-hidden cursor-pointer border-2 flex-shrink-0"
-        style={{ borderColor: colorScheme.primary }}
-        onClick={handleAboutClick}
+    <header className="fixed top-0 inset-x-0 z-40 px-4 pt-4">
+      <nav
+        className="max-w-5xl mx-auto flex items-center justify-between rounded-full pl-2 pr-2 py-2 transition-all duration-500 border"
+        style={{
+          background: scrolled || open ? 'var(--surface-strong)' : 'transparent',
+          borderColor: scrolled || open ? 'var(--border)' : 'transparent',
+          backdropFilter: scrolled || open ? 'blur(16px)' : 'none',
+          WebkitBackdropFilter: scrolled || open ? 'blur(16px)' : 'none',
+        }}
+        aria-label="Main"
       >
-        <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-      </div>
+        <a href="#home" className="flex items-center gap-3 pr-3" onClick={() => setOpen(false)}>
+          <img src={profileImage} alt="" className="w-10 h-10 rounded-full object-cover border-2" style={{ borderColor: 'var(--primary)' }} />
+          <span className="font-display font-bold tracking-tight">Steven Pierre</span>
+        </a>
 
-      {/* Navigation Buttons */}
-      <div className="flex flex-wrap gap-3">
-        {navItems.map((item) => {
-          const isActive = activeButton === item.name;
-          const isPrimaryLight = isLightColor(colorScheme.primary);
-          const activeTextColor = isPrimaryLight ? "#222" : colorScheme.text;
-          return (
-            <button
-              key={item.name}
-              className="flex items-center px-4 py-2 text-sm font-semibold rounded-md transition-all duration-300"
-              style={{
-                color: isActive ? activeTextColor : colorScheme.primary,
-                backgroundColor: isActive ? colorScheme.primary : 'transparent',
-                border: 'none',
-                textDecoration: 'none', // <- Remove all underline
-                textUnderlineOffset: undefined,
-                textDecorationThickness: undefined,
-              }}
-              onClick={item.onClick || (() => scrollToSection(item.ref, item.name))}
-            >
-              <item.icon className="mr-2 text-lg" />
-              {item.label}
-            </button>
-          );
-        })}
-      </div>
-    </nav>
+        <ul className="hidden md:flex items-center gap-1">
+          {links.map((l) => (
+            <li key={l.id}>
+              <a href={`#${l.id}`} className="relative block px-4 py-2 text-sm font-semibold rounded-full" aria-current={active === l.id ? 'true' : undefined}>
+                {active === l.id && (
+                  <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-full" style={{ background: 'var(--primary)' }} transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                )}
+                <span className="relative" style={{ color: active === l.id ? 'var(--on-primary)' : 'var(--text)' }}>
+                  {l.label}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-xl"
+          style={{ background: 'var(--surface)' }}
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+        >
+          {open ? <FiX /> : <FiMenu />}
+        </button>
+      </nav>
+
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            className="md:hidden max-w-5xl mx-auto mt-2 rounded-3xl p-3 border"
+            style={{ background: 'var(--surface-strong)', borderColor: 'var(--border)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
+          >
+            {links.map((l) => (
+              <li key={l.id}>
+                <a
+                  href={`#${l.id}`}
+                  onClick={() => setOpen(false)}
+                  className="block px-5 py-3 rounded-2xl font-display text-xl font-bold"
+                  style={{ color: active === l.id ? 'var(--primary)' : 'var(--text)' }}
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </header>
   );
 };
 

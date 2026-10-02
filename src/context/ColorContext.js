@@ -7,7 +7,8 @@ export const useColor = () => useContext(ColorContext);
 // Extended color schemes with onPrimary and onSecondary for contrast control
 export const colorSchemes = {
   default: {
-    background: 'black',      // page background
+    isDark: true,
+    background: '#07050d',    // page background
     primary: '#9333ea',       // main accent
     secondary: '#6b21a8',     // secondary accent
     text: '#ffffff',          // text on background
@@ -15,6 +16,7 @@ export const colorSchemes = {
     onSecondary: '#ffffff',   // text on secondary backgrounds
   },
   navy: {
+    isDark: true,
     background: '#1e3a8a',
     primary: '#60a5fa',
     secondary: '#3b82f6',
@@ -23,6 +25,7 @@ export const colorSchemes = {
     onSecondary: '#f8fafc',
   },
   skyBlue: {
+    isDark: false,
     background: '#dbeafe',
     primary: '#2563eb',
     secondary: '#60a5fa',
@@ -31,6 +34,7 @@ export const colorSchemes = {
     onSecondary: '#1e293b',
   },
   sage: {
+    isDark: false,
     background: '#d1fae5',
     primary: '#059669',
     secondary: '#34d399',
@@ -39,6 +43,7 @@ export const colorSchemes = {
     onSecondary: '#1e293b',
   },
   warmGray: {
+    isDark: false,
     background: '#f5f5f4',
     primary: '#78716c',
     secondary: '#a8a29e',
@@ -47,7 +52,8 @@ export const colorSchemes = {
     onSecondary: '#1e293b',
   },
   black: {
-    background: 'black',
+    isDark: true,
+    background: '#000000',
     primary: '#ffffff',
     secondary: '#444444',
     text: '#ffffff',
@@ -60,9 +66,13 @@ export const ColorProvider = ({ children }) => {
   const [colorScheme, setColorScheme] = useState(colorSchemes.default);
 
   useEffect(() => {
-    const saved = localStorage.getItem('preferredColorScheme');
-    if (saved && colorSchemes[saved]) {
-      setColorScheme(colorSchemes[saved]);
+    try {
+      const saved = localStorage.getItem('preferredColorScheme');
+      if (saved && colorSchemes[saved]) {
+        setColorScheme(colorSchemes[saved]);
+      }
+    } catch (e) {
+      // Storage can be unavailable (private mode, blocked cookies); keep the default.
     }
   }, []);
 
@@ -70,7 +80,11 @@ export const ColorProvider = ({ children }) => {
     const scheme = colorSchemes[schemeName];
     if (scheme) {
       setColorScheme(scheme);
-      localStorage.setItem('preferredColorScheme', schemeName);
+      try {
+        localStorage.setItem('preferredColorScheme', schemeName);
+      } catch (e) {
+        // Ignore storage failures; the scheme still applies for this visit.
+      }
     }
   };
 
