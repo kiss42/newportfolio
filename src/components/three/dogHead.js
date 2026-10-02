@@ -74,15 +74,18 @@ function headSDF(x, y, z) {
   d = smin(d, sdEllipsoid(x, y, z, [-0.1, -0.195, 0.52], [0.13, 0.115, 0.25], 0.1), 0.07); // flews
   d = smin(d, sdEllipsoid(x, y, z, [0.1, -0.195, 0.52], [0.13, 0.115, 0.25], 0.1), 0.07);
   d = smin(d, sdEllipsoid(x, y, z, [0, -0.285, 0.41], [0.135, 0.075, 0.22], 0.12), 0.08); // chin
-  // Brows: the dog's left one sits higher for that skeptical look.
-  d = smin(d, sdEllipsoid(x, y, z, [-0.19, 0.19, 0.385], [0.13, 0.06, 0.09]), 0.07);
-  d = smin(d, sdEllipsoid(x, y, z, [0.19, 0.215, 0.38], [0.13, 0.065, 0.09]), 0.07);
+  // Smiling cheeks bunch up under the eyes.
+  d = smin(d, sdEllipsoid(x, y, z, [-0.205, -0.03, 0.4], [0.1, 0.055, 0.075]), 0.05);
+  d = smin(d, sdEllipsoid(x, y, z, [0.21, -0.02, 0.395], [0.1, 0.055, 0.075]), 0.05);
+  // Brows: soft, even, and lifted, so she looks happy instead of critical.
+  d = smin(d, sdEllipsoid(x, y, z, [-0.2, 0.225, 0.37], [0.12, 0.045, 0.08]), 0.08);
+  d = smin(d, sdEllipsoid(x, y, z, [0.2, 0.225, 0.37], [0.12, 0.045, 0.08]), 0.08);
   d = smin(d, sdEllipsoid(x, y, z, [0, -0.29, -0.04], [0.29, 0.23, 0.25]), 0.18); // neck stub
 
   // Carve: eye sockets, the furrow between the eyes, and the mouth line.
   d = ssub(d, sdEllipsoid(x, y, z, EYE.left, [0.108, 0.108, 0.108]), 0.035);
   d = ssub(d, sdEllipsoid(x, y, z, EYE.right, [0.108, 0.108, 0.108]), 0.035);
-  d = ssub(d, sdEllipsoid(x, y, z, [0, 0.28, 0.46], [0.02, 0.15, 0.05]), 0.05);
+  d = ssub(d, sdEllipsoid(x, y, z, [0, 0.32, 0.44], [0.012, 0.1, 0.03]), 0.04); // faint groove, no frown
   d = ssub(d, mouthSDF(x, y, z), 0.03);
   return d;
 }
@@ -235,8 +238,8 @@ function makeEye(eyeTexture, lidMaterial, position, lookUp, lookIn, droop = 0, t
   upper.rotation.z = tilt;
   eye.add(upper);
   // Lower lid: cheeks pushed up by the smile give the eyes a happy squint.
-  const lower = new THREE.Mesh(new THREE.SphereGeometry(EYE.radius * 1.05, 40, 16, 0, Math.PI * 2, Math.PI - 0.62, 0.62), lidMaterial.userData.fur);
-  lower.rotation.x = -0.2;
+  const lower = new THREE.Mesh(new THREE.SphereGeometry(EYE.radius * 1.05, 40, 16, 0, Math.PI * 2, Math.PI - 1.15, 1.15), lidMaterial.userData.fur);
+  lower.rotation.x = 0.08; // pushed up by the smile into a happy crescent
   eye.add(lower);
   // Princess lashes at the outer corner of the upper lid (they blink with it).
   const side = position[0] < 0 ? 1 : -1;
@@ -255,6 +258,13 @@ function makeEye(eyeTexture, lidMaterial, position, lookUp, lookIn, droop = 0, t
     lash.translateY(0.036);
     upper.add(lash);
   });
+  // Extra catchlights for bright, happy eyes.
+  const sparkleMat = new THREE.MeshBasicMaterial({ color: '#ffffff' });
+  const big = new THREE.Mesh(new THREE.SphereGeometry(EYE.radius * 0.17, 16, 12), sparkleMat);
+  big.position.set(EYE.radius * 0.3 * (position[0] < 0 ? 1 : 1), EYE.radius * 0.38, EYE.radius * 0.88);
+  const small = new THREE.Mesh(new THREE.SphereGeometry(EYE.radius * 0.08, 12, 8), sparkleMat);
+  small.position.set(-EYE.radius * 0.28, -EYE.radius * 0.12, EYE.radius * 0.95);
+  eye.add(big, small);
   eye.userData.ball = ball;
   eye.userData.upperLid = upper;
   eye.userData.lowerLid = lower;
@@ -419,9 +429,9 @@ export function createDogHead({ resolution = 120, tiara = true } = {}) {
   lidMaterial.userData.fur = new THREE.MeshPhysicalMaterial({ color: '#0b0b0e', roughness: 0.5, sheen: 0.7, sheenRoughness: 0.4, sheenColor: new THREE.Color('#45434e') });
   const eyeTexture = makeEyeTexture();
   // Both eyes look up at the viewer, slightly converged, like in the photo.
-  // The dog's right lid sits a touch lower and slants: curious, slightly skeptical.
-  const leftEye = makeEye(eyeTexture, lidMaterial, EYE.left, 0.22, 0.12, 0.06, 0.12);
-  const rightEye = makeEye(eyeTexture, lidMaterial, EYE.right, 0.2, -0.1, 0.02, -0.1);
+  // Open, even upper lids and smiling lower lids: a happy, bright-eyed look.
+  const leftEye = makeEye(eyeTexture, lidMaterial, EYE.left, 0.18, 0.1, -0.16, 0.14);
+  const rightEye = makeEye(eyeTexture, lidMaterial, EYE.right, 0.18, -0.1, -0.16, -0.14);
   head.add(leftEye, rightEye);
 
   const noseMaterial = new THREE.MeshPhysicalMaterial({ color: '#0b0b0d', roughness: 0.32, clearcoat: 0.9, clearcoatRoughness: 0.25 });
