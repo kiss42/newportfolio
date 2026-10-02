@@ -1,9 +1,9 @@
 {
   "files": {
-    "main.css": "/newportfolio/static/css/main.b9bb5586.css",
-    "main.js": "/newportfolio/static/js/main.13fc57bc.js",
-    "static/js/327.28832f46.chunk.js": "/newportfolio/static/js/327.28832f46.chunk.js",
-    "static/js/263.c03b37ce.chunk.js": "/newportfolio/static/js/263.c03b37ce.chunk.js",
+    "main.css": "/newportfolio/static/css/main.75ea0012.css",
+    "main.js": "/newportfolio/static/js/main.ef86c026.js",
+    "static/js/327.4535052f.chunk.js": "/newportfolio/static/js/327.4535052f.chunk.js",
+    "static/js/263.78998ad3.chunk.js": "/newportfolio/static/js/263.78998ad3.chunk.js",
     "static/js/384.83147c62.chunk.js": "/newportfolio/static/js/384.83147c62.chunk.js",
     "static/js/605.bccf86bb.chunk.js": "/newportfolio/static/js/605.bccf86bb.chunk.js",
     "static/js/408.1c2ce944.chunk.js": "/newportfolio/static/js/408.1c2ce944.chunk.js",
@@ -11,16 +11,16 @@
     "static/media/Steven-Pierre-Resume.pdf": "/newportfolio/static/media/Steven-Pierre-Resume.75384d98c2dc70b377dd.pdf",
     "static/media/profile.jpg": "/newportfolio/static/media/profile.d393068ec0957ef3ead7.jpg",
     "index.html": "/newportfolio/index.html",
-    "main.b9bb5586.css.map": "/newportfolio/static/css/main.b9bb5586.css.map",
-    "main.13fc57bc.js.map": "/newportfolio/static/js/main.13fc57bc.js.map",
-    "327.28832f46.chunk.js.map": "/newportfolio/static/js/327.28832f46.chunk.js.map",
-    "263.c03b37ce.chunk.js.map": "/newportfolio/static/js/263.c03b37ce.chunk.js.map",
+    "main.75ea0012.css.map": "/newportfolio/static/css/main.75ea0012.css.map",
+    "main.ef86c026.js.map": "/newportfolio/static/js/main.ef86c026.js.map",
+    "327.4535052f.chunk.js.map": "/newportfolio/static/js/327.4535052f.chunk.js.map",
+    "263.78998ad3.chunk.js.map": "/newportfolio/static/js/263.78998ad3.chunk.js.map",
     "384.83147c62.chunk.js.map": "/newportfolio/static/js/384.83147c62.chunk.js.map",
     "605.bccf86bb.chunk.js.map": "/newportfolio/static/js/605.bccf86bb.chunk.js.map",
     "408.1c2ce944.chunk.js.map": "/newportfolio/static/js/408.1c2ce944.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.b9bb5586.css",
-    "static/js/main.13fc57bc.js"
+    "static/css/main.75ea0012.css",
+    "static/js/main.ef86c026.js"
   ]
 }
