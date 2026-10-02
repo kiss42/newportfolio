@@ -51,6 +51,19 @@ function hash3(x, y, z) {
 
 export const EYE = { left: [-0.195, 0.075, 0.392], right: [0.2, 0.088, 0.388], radius: 0.098 };
 const MOUTH_Y = -0.252;
+const MOUTH_PINK = new THREE.Color('#5a1a26');
+const LIP = new THREE.Color('#060608');
+
+// The open, smiling mouth: a central opening plus two corners pulled up into a grin.
+function mouthSDF(x, y, z) {
+  let d = sdEllipsoid(x, y, z, [0, -0.268, 0.6], [0.14, 0.06, 0.2], 0.1);
+  d = smin(d, sdEllipsoid(x, y, z, [-0.14, -0.232, 0.52], [0.065, 0.026, 0.11], 0.1), 0.04);
+  d = smin(d, sdEllipsoid(x, y, z, [0.14, -0.232, 0.52], [0.065, 0.026, 0.11], 0.1), 0.04);
+  // Upturned corners of the grin.
+  d = smin(d, sdEllipsoid(x, y, z, [-0.19, -0.205, 0.46], [0.035, 0.018, 0.07], 0.1), 0.03);
+  d = smin(d, sdEllipsoid(x, y, z, [0.19, -0.205, 0.46], [0.035, 0.018, 0.07], 0.1), 0.03);
+  return d;
+}
 
 function headSDF(x, y, z) {
   let d = sdEllipsoid(x, y, z, [0, 0.15, -0.02], [0.42, 0.4, 0.4]); // cranium
@@ -70,7 +83,7 @@ function headSDF(x, y, z) {
   d = ssub(d, sdEllipsoid(x, y, z, EYE.left, [0.108, 0.108, 0.108]), 0.035);
   d = ssub(d, sdEllipsoid(x, y, z, EYE.right, [0.108, 0.108, 0.108]), 0.035);
   d = ssub(d, sdEllipsoid(x, y, z, [0, 0.28, 0.46], [0.02, 0.15, 0.05]), 0.05);
-  d = ssub(d, sdEllipsoid(x, y, z, [0, MOUTH_Y, 0.56], [0.17, 0.007, 0.26], 0.1), 0.025);
+  d = ssub(d, mouthSDF(x, y, z), 0.03);
   return d;
 }
 
@@ -88,9 +101,15 @@ function coatColor(x, y, z, out) {
 
   out.copy(BLACK).lerp(WHITE, white);
 
-  // Black lip line along the mouth.
-  const lip = (1 - smoothstep(0.006, 0.02, Math.abs(y - MOUTH_Y))) * smoothstep(0.3, 0.42, z) * (1 - smoothstep(0.17, 0.21, ax));
-  out.lerp(BLACK, lip * 0.9);
+  // Smile: black lips around the opening, dark pink inside.
+  const m = mouthSDF(x, y, z);
+  const lip = 1 - smoothstep(0.012, 0.03, m);
+  out.lerp(LIP, lip * 0.95);
+  if (m < 0.01) out.copy(LIP).lerp(MOUTH_PINK, smoothstep(0.01, -0.01, m));
+  // Upturned smile line running out to the corners of the grin.
+  const smileY = -0.262 + 1.45 * x * x;
+  const smile = (1 - smoothstep(0.008, 0.022, Math.abs(y - smileY))) * smoothstep(0.38, 0.46, z) * (1 - smoothstep(0.2, 0.23, ax));
+  out.lerp(LIP, smile * 0.95);
 
   // Grey ticking on the white beside the nose.
   if (white > 0.5 && z > 0.55 && y > -0.24 && ax > 0.07) {
@@ -215,8 +234,30 @@ function makeEye(eyeTexture, lidMaterial, position, lookUp, lookIn, droop = 0, t
   upper.rotation.x = 0.12 + droop;
   upper.rotation.z = tilt;
   eye.add(upper);
+  // Lower lid: cheeks pushed up by the smile give the eyes a happy squint.
+  const lower = new THREE.Mesh(new THREE.SphereGeometry(EYE.radius * 1.05, 40, 16, 0, Math.PI * 2, Math.PI - 0.62, 0.62), lidMaterial.userData.fur);
+  lower.rotation.x = -0.2;
+  eye.add(lower);
+  // Princess lashes at the outer corner of the upper lid (they blink with it).
+  const side = position[0] < 0 ? 1 : -1;
+  [0.0, 0.28, 0.56].forEach((o, i) => {
+    const phi = Math.PI / 2 + side * (0.62 + o);
+    const th = 1.0;
+    const r = EYE.radius * 1.07;
+    const lash = new THREE.Mesh(new THREE.ConeGeometry(0.0095, 0.085 - i * 0.012, 6), lidMaterial);
+    const px = -Math.cos(phi) * Math.sin(th) * r;
+    const py = Math.cos(th) * r;
+    const pz = Math.sin(phi) * Math.sin(th) * r;
+    lash.position.set(px, py, pz);
+    // Point outward from the eyeball, flicking up and out.
+    const dir = new THREE.Vector3(px, py + r * 0.9, pz).normalize();
+    lash.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    lash.translateY(0.036);
+    upper.add(lash);
+  });
   eye.userData.ball = ball;
   eye.userData.upperLid = upper;
+  eye.userData.lowerLid = lower;
   return eye;
 }
 
@@ -278,13 +319,87 @@ function makeEarGeometry() {
   return geo;
 }
 
+// A goofy tongue hanging out of the smile, draped over the lower lip with a center groove.
+function makeTongue() {
+  const geo = new THREE.SphereGeometry(1, 40, 24);
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    let x = pos.getX(i) * 0.072;
+    let y = pos.getY(i) * 0.022;
+    let z = pos.getZ(i) * 0.13;
+    x *= 1 + 0.25 * Math.max(0, z / 0.13); // wider toward the tip
+    y -= 0.01 * Math.exp(-(x * x) / 0.0004) * (y > 0 ? 1 : 0); // groove down the middle
+    // Drape: the front half curls down over the chin.
+    const f = Math.max(0, z + 0.02);
+    y -= 3.2 * f * f;
+    z -= 0.6 * f * f;
+    pos.setXYZ(i, x, y, z);
+  }
+  geo.computeVertexNormals();
+  const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: '#e46f86', roughness: 0.35, clearcoat: 0.7, clearcoatRoughness: 0.2, sheen: 0.4, sheenColor: new THREE.Color('#ffb3c1') }));
+  return mesh;
+}
+
+// Princess tiara: a gold band on the crown with scalloped arches, tall points, and a pink heart gem in front.
+function makeTiara() {
+  const tiara = new THREE.Group();
+  const gold = new THREE.MeshPhysicalMaterial({ color: '#f2c75c', metalness: 1, roughness: 0.2, clearcoat: 0.6 });
+  const R0 = 0.22;
+  const band = new THREE.Mesh(new THREE.TorusGeometry(R0, 0.016, 10, 72, Math.PI * 1.1), gold);
+  band.rotation.set(Math.PI / 2, 0, -0.05 * Math.PI);
+  tiara.add(band);
+  const pearl = new THREE.MeshPhysicalMaterial({ color: '#fff6fb', roughness: 0.15, clearcoat: 1, sheen: 1, sheenColor: new THREE.Color('#ffd1e8') });
+  const gemPurple = new THREE.MeshPhysicalMaterial({ color: '#b86bff', roughness: 0.05, clearcoat: 1, emissive: '#5b21b6', emissiveIntensity: 0.3 });
+  const angles = [-1.2, -0.8, -0.4, 0, 0.4, 0.8, 1.2];
+  const heights = [0.07, 0.1, 0.14, 0.2, 0.14, 0.1, 0.07];
+  const tips = angles.map((t, i) => {
+    const a = Math.PI / 2 + t; // front = +z
+    return new THREE.Vector3(Math.cos(a) * R0, heights[i], Math.sin(a) * R0);
+  });
+  tips.forEach((tip, i) => {
+    const base = new THREE.Vector3(tip.x, 0, tip.z);
+    // Each point is a slim cone rising from the band.
+    const spike = new THREE.Mesh(new THREE.ConeGeometry(0.02, heights[i], 6), gold);
+    spike.position.set(tip.x, heights[i] / 2, tip.z);
+    tiara.add(spike);
+    if (i !== 3) {
+      const gem = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.022 : 0.018, 16, 12), i % 2 ? gemPurple : pearl);
+      gem.position.set(tip.x, heights[i] + 0.01, tip.z);
+      tiara.add(gem);
+    }
+    // Scalloped arch between neighbouring points.
+    if (i < tips.length - 1) {
+      const next = tips[i + 1];
+      const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(tip.x, heights[i] * 0.55, tip.z),
+        new THREE.Vector3((tip.x + next.x) / 2 * 1.04, 0.012, (tip.z + next.z) / 2 * 1.04),
+        new THREE.Vector3(next.x, heights[i + 1] * 0.55, next.z)
+      );
+      tiara.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 16, 0.0075, 6), gold));
+    }
+    base.y = 0;
+  });
+  // Heart gem at the front.
+  const heart = new THREE.Shape();
+  heart.moveTo(0, -0.03);
+  heart.bezierCurveTo(-0.045, 0.0, -0.035, 0.035, 0, 0.018);
+  heart.bezierCurveTo(0.035, 0.035, 0.045, 0.0, 0, -0.03);
+  const heartGeo = new THREE.ExtrudeGeometry(heart, { depth: 0.012, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.006, bevelSegments: 3, curveSegments: 20 });
+  heartGeo.center();
+  const heartMesh = new THREE.Mesh(heartGeo, new THREE.MeshPhysicalMaterial({ color: '#ff5fa2', roughness: 0.05, clearcoat: 1, emissive: '#c0265f', emissiveIntensity: 0.4 }));
+  heartMesh.position.set(0, 0.215, R0 + 0.01);
+  heartMesh.scale.setScalar(1.35);
+  tiara.add(heartMesh);
+  return tiara;
+}
+
 /**
  * Builds the dog head. Returns a THREE.Group with userData handles for animation:
  *   userData.eyes  -> [leftEyeGroup, rightEyeGroup] (rotate `.userData.ball` to look around)
  *   userData.ears  -> [leftEar, rightEar] (rotate to perk/flop)
  *   userData.brows -> unused placeholder for future expression rigs
  */
-export function createDogHead({ resolution = 120 } = {}) {
+export function createDogHead({ resolution = 120, tiara = true } = {}) {
   const head = new THREE.Group();
 
   const furMaterial = new THREE.MeshPhysicalMaterial({
@@ -305,7 +420,7 @@ export function createDogHead({ resolution = 120 } = {}) {
   const eyeTexture = makeEyeTexture();
   // Both eyes look up at the viewer, slightly converged, like in the photo.
   // The dog's right lid sits a touch lower and slants: curious, slightly skeptical.
-  const leftEye = makeEye(eyeTexture, lidMaterial, EYE.left, 0.22, 0.12, 0.14, 0.16);
+  const leftEye = makeEye(eyeTexture, lidMaterial, EYE.left, 0.22, 0.12, 0.06, 0.12);
   const rightEye = makeEye(eyeTexture, lidMaterial, EYE.right, 0.2, -0.1, 0.02, -0.1);
   head.add(leftEye, rightEye);
 
@@ -325,6 +440,18 @@ export function createDogHead({ resolution = 120 } = {}) {
   rightEar.rotation.set(0.85, 0.3, -1.12);
   head.add(leftEar, rightEar);
 
-  head.userData = { eyes: [leftEye, rightEye], ears: [leftEar, rightEar], nose };
+  const tongue = makeTongue();
+  tongue.position.set(0.03, -0.285, 0.6);
+  tongue.scale.setScalar(1.18);
+  tongue.rotation.set(0.05, 0.06, -0.12); // hangs a little to one side, for goofiness
+  head.add(tongue);
+
+  const crown = makeTiara();
+  crown.position.set(0.02, 0.5, -0.03);
+  crown.rotation.set(-0.18, 0, 0.13); // perched just a bit crooked
+  crown.visible = tiara;
+  head.add(crown);
+
+  head.userData = { eyes: [leftEye, rightEye], ears: [leftEar, rightEar], nose, tongue, tiara: crown };
   return head;
 }
