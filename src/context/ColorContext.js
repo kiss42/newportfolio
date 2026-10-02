@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { schemeFromAccent } from '../utilities/color';
 
 const ColorContext = createContext();
 
@@ -60,36 +61,103 @@ export const colorSchemes = {
     onPrimary: '#000000',
     onSecondary: '#ffffff',
   },
+  sunset: {
+    isDark: true,
+    background: '#0c0604',
+    primary: '#f97316',
+    secondary: '#9a3412',
+    text: '#ffffff',
+    onPrimary: '#0b0b12',
+    onSecondary: '#ffffff',
+  },
+  rose: {
+    isDark: true,
+    background: '#0d0408',
+    primary: '#f43f5e',
+    secondary: '#9f1239',
+    text: '#ffffff',
+    onPrimary: '#ffffff',
+    onSecondary: '#ffffff',
+  },
+  aqua: {
+    isDark: true,
+    background: '#03090c',
+    primary: '#22d3ee',
+    secondary: '#0e7490',
+    text: '#ffffff',
+    onPrimary: '#0b0b12',
+    onSecondary: '#ffffff',
+  },
+};
+
+export const schemeLabels = {
+  default: 'Violet',
+  navy: 'Navy',
+  skyBlue: 'Sky',
+  sage: 'Sage',
+  warmGray: 'Stone',
+  black: 'Mono',
+  sunset: 'Sunset',
+  rose: 'Rose',
+  aqua: 'Aqua',
+};
+
+const read = (key) => {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    return null; // Storage can be unavailable (private mode, blocked cookies).
+  }
+};
+
+const write = (key, value) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    // Ignore storage failures; the scheme still applies for this visit.
+  }
 };
 
 export const ColorProvider = ({ children }) => {
-  const [colorScheme, setColorScheme] = useState(colorSchemes.default);
+  const [schemeName, setSchemeName] = useState('default');
+  const [custom, setCustom] = useState({ primary: '#9333ea', isDark: true });
+  // A scheme shown temporarily while hovering a swatch; never persisted.
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
+    const saved = read('preferredColorScheme');
     try {
-      const saved = localStorage.getItem('preferredColorScheme');
-      if (saved && colorSchemes[saved]) {
-        setColorScheme(colorSchemes[saved]);
+      const savedCustom = JSON.parse(read('customColorScheme'));
+      if (savedCustom && /^#[0-9a-f]{6}$/i.test(savedCustom.primary)) {
+        setCustom({ primary: savedCustom.primary, isDark: !!savedCustom.isDark });
       }
     } catch (e) {
-      // Storage can be unavailable (private mode, blocked cookies); keep the default.
+      // Ignore malformed saved data.
     }
+    if (saved && (colorSchemes[saved] || saved === 'custom')) setSchemeName(saved);
   }, []);
 
-  const changeColorScheme = (schemeName) => {
-    const scheme = colorSchemes[schemeName];
-    if (scheme) {
-      setColorScheme(scheme);
-      try {
-        localStorage.setItem('preferredColorScheme', schemeName);
-      } catch (e) {
-        // Ignore storage failures; the scheme still applies for this visit.
-      }
-    }
+  const activeScheme = schemeName === 'custom' ? schemeFromAccent(custom.primary, custom.isDark) : colorSchemes[schemeName];
+  const colorScheme = preview || activeScheme;
+
+  const changeColorScheme = (name) => {
+    if (!colorSchemes[name]) return;
+    setPreview(null);
+    setSchemeName(name);
+    write('preferredColorScheme', name);
+  };
+
+  const setCustomScheme = (next) => {
+    const value = { ...custom, ...next };
+    setPreview(null);
+    setCustom(value);
+    setSchemeName('custom');
+    write('customColorScheme', JSON.stringify(value));
+    write('preferredColorScheme', 'custom');
   };
 
   return (
-    <ColorContext.Provider value={{ colorScheme, changeColorScheme }}>
+    <ColorContext.Provider value={{ colorScheme, schemeName, custom, changeColorScheme, setCustomScheme, setPreview }}>
       {children}
     </ColorContext.Provider>
   );

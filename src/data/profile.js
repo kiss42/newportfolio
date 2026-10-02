@@ -70,7 +70,7 @@ export const projects = [
   {
     title: 'SoulSite',
     description: 'A mystical-themed web app offering spiritual tools.',
-    link: 'https://kiss42.github.io/soulsite/',
+    link: 'https://soulsite-roan.vercel.app/',
     icon: FaMagic,
     tags: ['React', 'UI'],
   },
